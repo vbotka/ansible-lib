@@ -1,0 +1,7 @@
+---
+# tasks ansible_lib
+
+- import_tasks: debug.yml
+
+# EOF
+...

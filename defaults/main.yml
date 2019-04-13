@@ -1,0 +1,8 @@
+---
+# ansible_lib defaults
+
+al_debug: false
+al_backup_conf: false
+
+# EOF
+...

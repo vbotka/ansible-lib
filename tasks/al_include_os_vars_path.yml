@@ -1,0 +1,45 @@
+---
+
+# ansible_lib: al_include_os_vars_path
+# Description: Include OS specific variables from al_os_vars_path
+# Input: al_os_vars_path
+# Output: none
+#
+# Example:
+# 
+# tasks:
+#   - set_fact:
+#       al_os_vars_path: "{{ playbook_dir }}"
+#   - include_role:
+#       name: vbotka.ansible_lib
+#       tasks_from: al_include_os_vars_path.yml
+
+- name: "al_include_os_vars_path: End of play when al_os_vars_path not defined"
+  when: al_os_vars_path is not defined
+  fail:
+    msg: "Variable al_os_vars_path not defined. End of play."
+
+- name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "default.yml"
+      paths: "{{ al_os_vars_path }}/vars/defaults"
+      skip: true
+
+- name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "default.yml"
+      paths: "{{ al_os_vars_path }}/vars"
+      skip: true
+
+# EOF
+...
