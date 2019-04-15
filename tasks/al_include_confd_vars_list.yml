@@ -1,0 +1,97 @@
+---
+
+# ansible_lib: al_include_confd_vars_list
+# Description: Create list of vars from files in al_include_confd_dir
+# Input:  al_include_confd_dir ............... direcotry with the configuration files
+#         al_include_confd_vars_list_plain ... create plain list of variables
+#         al_include_confd_vars_list_fname ... create list of varables incl. the file name
+# Output: al_include_confd_vars_list ......... created list of varables
+#
+# Example:
+# vars:
+#   al_include_confd_dir: "{{ playbook_dir }}/conf.d"
+#   al_include_confd_vars_list_plain: false
+#   al_include_confd_vars_list_fname: true
+# tasks:
+#   - include_role:
+#       name: vbotka.ansible_lib
+#       tasks_from: al_include_confd_vars_list.yml
+
+
+  # Debug and Test input variable al_include_confd_dir
+- name: "al_include_confd_vars_list: Debug"
+  when: al_debug
+  vars:
+    msg: |
+      al_include_confd_dir [ {{ al_include_confd_dir|default('NOT_DEFINED') }} ]
+      al_include_confd_vars_list_plain [ {{ al_include_confd_vars_list_plain|default(true) }} ]
+      al_include_confd_vars_list_fname [ {{ al_include_confd_vars_list_fname|default(false) }} ]
+  debug:
+    msg: "{{ msg.split('\n') }}"
+- name: "al_include_confd_vars_list: End of play"
+  when: al_include_confd_dir is not defined
+  fail:
+    msg: "Variable al_include_confd_dir is not defined. End of play."
+- name: "al_include_confd_vars_list: End of play"
+  when: al_include_confd_dir is not exists
+  fail:
+    msg: "Path {{ al_include_confd_dir }} does not exist. End of play."
+- name: "al_include_confd_vars_list: End of play"
+  when: al_include_confd_vars_list_plain|default(true) ==
+        al_include_confd_vars_list_fname|default(false)
+  fail:
+    msg: "Values of al_include_confd_vars_list_plain and
+          al_include_confd_vars_list_fname are mutually exclusive. End of play."
+
+  # List of configuration files
+- name: "al_include_confd_vars_list: Find configuration files"
+  find:
+    paths: "{{ al_include_confd_dir }}"
+    file_type: file
+  delegate_to: localhost
+  register: result
+- name: "al_include_confd_vars_list: Create list of configuration files"
+  set_fact:
+    al_local_path_list: "{{ result|json_query('files[].path') }}"
+- name: "al_include_confd_vars_list: Debug list of configuration files"
+  when: al_debug
+  debug:
+    var: al_local_path_list
+
+  # List of configuration links
+- name: "al_include_confd_vars_list: Find configuration links"
+  find:
+    paths: "{{ al_include_confd_dir }}"
+    file_type: link
+  delegate_to: localhost
+  register: result
+- name: "al_include_confd_vars_list: Add list of configuration links"
+  set_fact:
+    al_local_path_list: "{{ al_local_path_list + result|json_query('files[].path') }}"
+- name: "al_include_confd_vars_list: Debug list of configuration paths"
+  when: al_debug
+  debug:
+    var: al_local_path_list
+
+  # Include vars from configuration paths and
+  # Create output variable al_include_confd_vars_list
+- name: "al_include_confd_vars_list: Create empty al_include_confd_vars_list"
+  set_fact:
+    al_include_confd_vars_list: []
+  # Create plain list of variables
+- name: "al_include_confd_vars_list: Create plain list of vars"
+  when: al_include_confd_vars_list_plain|default(true)
+  include_tasks: fn/al_include_confd_vars_list_plain.yml
+  loop: "{{ al_local_path_list }}"
+  # Create list of dictionaries with fname
+- name: "al_include_confd_vars_list: Create list of vars incl. fname"
+  when: al_include_confd_vars_list_fname|default(false)
+  include_tasks: fn/al_include_confd_vars_list_fname.yml
+  loop: "{{ al_local_path_list }}"
+  # Debug
+- name: "al_include_confd_vars_list: Debug al_include_confd_vars_list"
+  when: al_debug
+  debug:
+    var: al_include_confd_vars_list
+
+...

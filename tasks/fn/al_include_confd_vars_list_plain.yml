@@ -1,0 +1,12 @@
+---
+
+- name: "al_include_confd_vars_list_plain: Include {{ item|basename }}"
+  include_vars:
+    file: "{{ item }}"
+    name: al_local_var
+- name: "al_include_confd_vars_list_plain: Add vars to list"
+  set_fact:
+    al_include_confd_vars_list: "{{ al_include_confd_vars_list +
+                                    al_local_var|json_query('*') }}"
+
+...

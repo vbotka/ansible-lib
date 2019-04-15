@@ -2,23 +2,31 @@
 
 # ansible_lib: al_include_os_vars_path
 # Description: Include OS specific variables from al_os_vars_path
-# Input: al_os_vars_path
+# Input: al_os_vars_path ................ directory to read varibles from
 # Output: none
 #
 # Example:
-# 
+# vars:
+#   al_os_vars_path: "{{ playbook_dir }}"
 # tasks:
-#   - set_fact:
-#       al_os_vars_path: "{{ playbook_dir }}"
 #   - include_role:
 #       name: vbotka.ansible_lib
 #       tasks_from: al_include_os_vars_path.yml
 
+  # Debug and Test input variable al_include_confd_dir
+- name: "al_include_os_vars_path: Debug"
+  when: al_debug
+  vars:
+    msg: |
+      al_os_vars_path [ {{ al_os_vars_path|default('NOT_DEFINED') }} ]
+  debug:
+    msg: "{{ msg.split('\n') }}"
 - name: "al_include_os_vars_path: End of play when al_os_vars_path not defined"
   when: al_os_vars_path is not defined
   fail:
     msg: "Variable al_os_vars_path not defined. End of play."
 
+  # Defaults varaibles
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
@@ -30,6 +38,7 @@
       paths: "{{ al_os_vars_path }}/vars/defaults"
       skip: true
 
+  # Custom variables
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
   include_vars: "{{ item }}"
   with_first_found:
