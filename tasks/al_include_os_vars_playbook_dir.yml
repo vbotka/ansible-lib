@@ -12,7 +12,7 @@
 #       tasks_from: al_include_os_vars_playbook_dir.yml
 
   # Defaults variables
-- name: "al_include_os_vars_playbook_dir: Vars from {{ al_include_os_vars_playbook_dir }}/vars/defaults"
+- name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
     - files:
@@ -24,7 +24,7 @@
       skip: true
 
   # Custom variables
-- name: "al_include_os_vars_playbook_dir: Vars from {{ al_include_os_vars_playbook_dir }}/vars"
+- name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
   include_vars: "{{ item }}"
   with_first_found:
     - files:
