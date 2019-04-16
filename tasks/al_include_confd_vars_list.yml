@@ -5,28 +5,22 @@
 # Description: Create list of vars from files in al_include_confd_dir
 #
 # Input:
-# al_include_confd_dir ............. direcotry with the configuration files
-# al_include_confd_vars_list_plain . create plain list of variables
-# al_include_confd_vars_list_fname . create list of varables incl. the file name
-# al_include_confd_patterns ........ see ansible module:find parameter:patterns
-# al_include_confd_excludes ........ see ansible module:find parameter:excludes
+# al_include_confd_dir ........... direcotry with the configuration files
+# al_include_confd_patterns ...... see ansible module:find parameter:patterns
+# al_include_confd_excludes ...... see ansible module:find parameter:excludes
+# al_include_confd_vars_list_type  type of the list. See defaults.
 #
 # Output:
-# al_include_confd_vars_list ....... created list of varables
+# al_include_confd_vars_list ..... created list of varables
 #
 # Example:
 # vars:
 #   al_include_confd_dir: "{{ playbook_dir }}/conf.d"
-#   al_include_confd_vars_list_plain: false
-#   al_include_confd_vars_list_fname: true
+#   al_include_confd_vars_list_type: "plain"
 # tasks:
 #   - include_role:
 #       name: vbotka.ansible_lib
 #       tasks_from: al_include_confd_vars_list.yml
-#
-# Note:
-# 'al_include_confd_vars_list_plain' and 'al_include_confd_vars_list_fname' are
-# mutually exclusive.
 #-------------------------------------------------------------------------------
 
   # Debug and Test input variable al_include_confd_dir
@@ -35,8 +29,7 @@
   vars:
     msg: |
       al_include_confd_dir [ {{ al_include_confd_dir|default('NOT_DEFINED') }} ]
-      al_include_confd_vars_list_plain [ {{ al_include_confd_vars_list_plain }} ]
-      al_include_confd_vars_list_fname [ {{ al_include_confd_vars_list_fname }} ]
+      al_include_confd_vars_list_type [ {{ al_include_confd_vars_list_type }} ]
       al_include_confd_patterns [ {{ al_include_confd_patterns }} ]
       al_include_confd_excludes [ {{ al_include_confd_excludes }} ]
   debug:
@@ -50,11 +43,9 @@
   fail:
     msg: "Path {{ al_include_confd_dir }} does not exist. End of play."
 - name: "al_include_confd_vars_list: End of play"
-  when: al_include_confd_vars_list_plain|bool ==
-        al_include_confd_vars_list_fname|bool
+  when: al_include_confd_vars_list_type not in al_include_confd_vars_list_options
   fail:
-    msg: "Values of al_include_confd_vars_list_plain and
-          al_include_confd_vars_list_fname are mutually exclusive. End of play."
+    msg: "Unknown type of al_include_confd_vars_list_type. End of play."
 
   # List of configuration files
 - name: "al_include_confd_vars_list: Find configuration files"
@@ -96,12 +87,12 @@
     al_include_confd_vars_list: []
   # Create plain list of variables
 - name: "al_include_confd_vars_list: Create plain list of vars"
-  when: al_include_confd_vars_list_plain|bool
+  when: al_include_confd_vars_list_type == "plain"
   include_tasks: fn/al_include_confd_vars_list_plain.yml
   loop: "{{ al_local_path_list }}"
   # Create list of dictionaries with fname
 - name: "al_include_confd_vars_list: Create list of vars incl. fname"
-  when: al_include_confd_vars_list_fname|bool
+  when: al_include_confd_vars_list_type == "fname"
   include_tasks: fn/al_include_confd_vars_list_fname.yml
   loop: "{{ al_local_path_list }}"
   # Debug
