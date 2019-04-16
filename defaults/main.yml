@@ -4,5 +4,11 @@
 al_debug: false
 al_backup_conf: false
 
+# al_include_confd_vars_list
+al_include_confd_vars_list_plain: true
+al_include_confd_vars_list_fname: false
+al_include_confd_patterns: "*"
+al_include_confd_excludes: "*~, #*"
+
 # EOF
 ...
