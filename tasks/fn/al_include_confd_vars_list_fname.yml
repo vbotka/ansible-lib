@@ -1,5 +1,4 @@
 ---
-
 - name: "al_include_confd_vars_list_fname: Create al_local_fname"
   set_fact:
     al_local_fname: "{{ (item|basename|splitext)[0] }}"
@@ -7,10 +6,13 @@
   include_vars:
     file: "{{ item }}"
     name: al_local_var
+- name: "al_include_confd_vars_list_fname: Debug"
+  when: al_debug
+  debug:
+    var: al_local_var
 - name: "al_include_confd_vars_list_fname: Add fname and vars to list"
   set_fact:
     al_include_confd_vars_list: "{{ al_include_confd_vars_list + [
                                     {'fname': al_local_fname,
                                      'vars': al_local_var|json_query('*')} ] }}"
-
 ...
