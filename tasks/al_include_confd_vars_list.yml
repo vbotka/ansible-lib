@@ -1,6 +1,6 @@
 ---
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ansible_lib: al_include_confd_vars_list
 # Description: Create list of vars from files in al_include_confd_dir
 #
@@ -21,9 +21,9 @@
 #   - include_role:
 #       name: vbotka.ansible_lib
 #       tasks_from: al_include_confd_vars_list.yml
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-  # Debug and Test input variable al_include_confd_dir
+# Debug and Test input variable al_include_confd_dir
 - name: "al_include_confd_vars_list: Debug"
   when: al_debug|bool
   vars:
@@ -47,7 +47,7 @@
   fail:
     msg: "Unknown type of al_include_confd_vars_list_type. End of play."
 
-  # List of configuration files
+# List of configuration files
 - name: "al_include_confd_vars_list: Find configuration files"
   find:
     file_type: file
@@ -64,7 +64,7 @@
   debug:
     var: al_local_path_list
 
-  # List of configuration links
+# List of configuration links
 - name: "al_include_confd_vars_list: Find configuration links"
   find:
     file_type: link
@@ -80,22 +80,22 @@
   debug:
     var: al_local_path_list
 
-  # Include vars from configuration paths and
-  # Create output variable al_include_confd_vars_list
+# Include vars from configuration paths and
+# Create output variable al_include_confd_vars_list
 - name: "al_include_confd_vars_list: Create empty al_include_confd_vars_list"
   set_fact:
     al_include_confd_vars_list: []
-  # Create plain list of variables
+# Create plain list of variables
 - name: "al_include_confd_vars_list: Create plain list of vars"
   when: al_include_confd_vars_list_type == "plain"
   include_tasks: fn/al_include_confd_vars_list_plain.yml
   loop: "{{ al_local_path_list }}"
-  # Create list of dictionaries with fname
+# Create list of dictionaries with fname
 - name: "al_include_confd_vars_list: Create list of vars incl. fname"
   when: al_include_confd_vars_list_type == "fname"
   include_tasks: fn/al_include_confd_vars_list_fname.yml
   loop: "{{ al_local_path_list }}"
-  # Debug
+# Debug
 - name: "al_include_confd_vars_list: Debug al_include_confd_vars_list"
   when: al_debug|bool
   debug:

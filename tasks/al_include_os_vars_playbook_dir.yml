@@ -11,7 +11,7 @@
 #       name: vbotka.ansible_lib
 #       tasks_from: al_include_os_vars_playbook_dir.yml
 
-  # Defaults variables
+# Defaults variables
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
@@ -23,7 +23,7 @@
       paths: "{{ playbook_dir }}/vars/defaults"
       skip: true
 
-  # Custom variables
+# Custom variables
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
   include_vars: "{{ item }}"
   with_first_found:

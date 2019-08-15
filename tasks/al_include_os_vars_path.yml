@@ -4,7 +4,7 @@
 # Description: Include OS specific variables from al_os_vars_path
 # Input: al_os_vars_path ................ directory to read varibles from
 # Output: none
-#
+
 # Example:
 # vars:
 #   al_os_vars_path: "{{ playbook_dir }}"
@@ -13,7 +13,16 @@
 #       name: vbotka.ansible_lib
 #       tasks_from: al_include_os_vars_path.yml
 
-  # Debug and Test input variable al_include_confd_dir
+# Notes
+# 1) Create files vars/defaults/default.yml and vars/default.yml (at
+#    least empty).
+# 2) Variables in vars/defaults/* will be overwritten by the file from
+#    "with_first_found" in vars.
+# 3) Variables in vars/main.yml will be ovewritten by the file from
+#    the list "with_first_found".
+
+
+# Debug and Test input variable al_os_vars_path
 - name: "al_include_os_vars_path: Debug"
   when: al_debug
   vars:
@@ -26,7 +35,7 @@
   fail:
     msg: "Variable al_os_vars_path not defined. End of play."
 
-  # Defaults varaibles
+# Defaults variables
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
@@ -36,9 +45,8 @@
         - "{{ ansible_os_family }}.yml"
         - "default.yml"
       paths: "{{ al_os_vars_path }}/vars/defaults"
-      skip: true
 
-  # Custom variables
+# Custom variables
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
   include_vars: "{{ item }}"
   with_first_found:
@@ -48,7 +56,6 @@
         - "{{ ansible_os_family }}.yml"
         - "default.yml"
       paths: "{{ al_os_vars_path }}/vars"
-      skip: true
 
 # EOF
 ...
