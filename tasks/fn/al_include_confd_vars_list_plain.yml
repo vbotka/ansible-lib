@@ -4,7 +4,7 @@
     file: "{{ item }}"
     name: al_local_var
 - name: "al_include_confd_vars_list_plain: Debug"
-  when: al_debug
+  when: al_debug|bool
   debug:
     var: al_local_var
 - name: "al_include_confd_vars_list_plain: Add vars to list"

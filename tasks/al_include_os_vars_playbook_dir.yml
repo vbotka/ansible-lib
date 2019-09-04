@@ -1,7 +1,9 @@
 ---
 
+# ------------------------------------------------------------------------------
 # ansible_lib: al_include_os_vars_playbook_dir
 # Description: Include OS specific variables from playbook_dir
+#
 # Input: none
 # Output: none
 #
@@ -20,8 +22,8 @@
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
         - "default.yml"
+        - "defaults.yml"
       paths: "{{ playbook_dir }}/vars/defaults"
-      skip: true
 
 # Custom variables
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
@@ -32,8 +34,8 @@
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
         - "default.yml"
+        - "defaults.yml"
       paths: "{{ playbook_dir }}/vars"
-      skip: true
 
 # EOF
 ...
