@@ -11,8 +11,7 @@ Do not run this role. It's a collection of independent tasks. The
 purpose of this role is to provide a library of reusable tasks to be
 included in playbooks and other roles.
 
-Tested with FreeBSD 12.0 and Ubuntu 18.04. Some tasks tested with CentOS 7.
-
+See the tasks' descriptions end examples.
 
 ## License
 
