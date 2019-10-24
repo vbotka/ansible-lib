@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/vbotka/ansible-linux-lib.svg?branch=master)](https://travis-ci.org/vbotka/ansible-linux-lib)
 
-[Ansible role.](https://galaxy.ansible.com/vbotka/linux_lib/) Ansible Linux library of tasks.
+[Ansible role.](https://galaxy.ansible.com/vbotka/linux_lib/) Library of Ansible tasks.
 
 
 ## Description
