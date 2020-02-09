@@ -1,29 +1,35 @@
 ---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # ------------------------------------------------------------------------------
 # ansible_lib: al_include_os_vars_path
+#
 # Description: Include OS specific variables from al_os_vars_path
 #
 # Input:
-# al_os_vars_path ................ directory to read varibles from
+#
+#   al_os_vars_path ................ directory to read variables from
 #
 # Output: none
 #
 # Example:
-# vars:
-#   al_os_vars_path: "{{ playbook_dir }}"
-# tasks:
-#   - include_role:
-#       name: vbotka.ansible_lib
-#       tasks_from: al_include_os_vars_path.yml
+#
+#   vars:
+#     al_os_vars_path: "{{ playbook_dir }}"
+#   tasks:
+#     - include_role:
+#         name: vbotka.ansible_lib
+#         tasks_from: al_include_os_vars_path.yml
 #
 # Notes:
-# 1) Create files vars/defaults/default.yml and vars/default.yml (at
-#    least empty).
-# 2) Variables in vars/defaults/* will be overwritten by the file from
-#    "with_first_found" in vars.
-# 3) Variables in vars/main.yml will be ovewritten by the file from
-#    the list "with_first_found".
+#
+#   1) Create files vars/defaults/default.yml and vars/default.yml (at
+#      least empty).
+#   2) Variables in vars/defaults/* will be overwritten by the file from
+#      "with_first_found" in vars.
+#   3) Variables in vars/main.yml will be ovewritten by the file from
+#      the list "with_first_found".
 # ------------------------------------------------------------------------------
 
 # Debug and Test input variable al_os_vars_path

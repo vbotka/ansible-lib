@@ -1,17 +1,23 @@
 ---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # ------------------------------------------------------------------------------
 # ansible_lib: al_include_os_vars_playbook_dir
+#
 # Description: Include OS specific variables from playbook_dir
 #
 # Input: none
+#
 # Output: none
 #
 # Example:
-# tasks:
-#   - include_role:
-#       name: vbotka.ansible_lib
-#       tasks_from: al_include_os_vars_playbook_dir.yml
+#
+#   tasks:
+#     - include_role:
+#         name: vbotka.ansible_lib
+#         tasks_from: al_include_os_vars_playbook_dir.yml
+# ------------------------------------------------------------------------------
 
 # Defaults variables
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"

@@ -1,5 +1,6 @@
 ---
-# tasks ansible_lib
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 - import_tasks: debug.yml
 

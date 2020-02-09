@@ -1,4 +1,7 @@
 ---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
 - name: "al_include_confd_vars_list_plain: Include {{ item|basename }}"
   include_vars:
     file: "{{ item }}"
@@ -11,4 +14,5 @@
   set_fact:
     al_include_confd_vars_list: "{{ al_include_confd_vars_list +
                                     al_local_var|json_query('*') }}"
+#EOF
 ...

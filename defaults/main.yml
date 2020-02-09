@@ -4,6 +4,14 @@
 al_debug: false
 al_backup_conf: false
 
+# al_sanity_platform
+al_sanity_platform_fail: true
+al_sanity_platform_version_fail: true
+al_sanity_platform_end_host: false
+al_sanity_platform_version_end_host: false
+al_sanity_platform_warning: true
+al_sanity_platform_gather_subset: true
+
 # al_include_confd_vars_list
 al_include_confd_vars_list_type: "plain"
 al_include_confd_vars_list_options: ["plain", "fname"]

@@ -1,26 +1,32 @@
 ---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # ------------------------------------------------------------------------------
 # ansible_lib: al_include_confd_vars_list
+#
 # Description: Create list of vars from files in al_include_confd_dir
 #
 # Input:
-# al_include_confd_dir ........... direcotry with the configuration files
-# al_include_confd_patterns ...... see ansible module:find parameter:patterns
-# al_include_confd_excludes ...... see ansible module:find parameter:excludes
-# al_include_confd_vars_list_type  type of the list. See defaults.
+#
+#   al_include_confd_dir ........... direcotry with the configuration files
+#   al_include_confd_patterns ...... see ansible module:find parameter:patterns
+#   al_include_confd_excludes ...... see ansible module:find parameter:excludes
+#   al_include_confd_vars_list_type  type of the list. See defaults.
 #
 # Output:
-# al_include_confd_vars_list ..... created list of varables
+#
+#   al_include_confd_vars_list ..... created list of varables
 #
 # Example:
-# vars:
-#   al_include_confd_dir: "{{ playbook_dir }}/conf.d"
-#   al_include_confd_vars_list_type: "plain"
-# tasks:
-#   - include_role:
-#       name: vbotka.ansible_lib
-#       tasks_from: al_include_confd_vars_list.yml
+#
+#   vars:
+#     al_include_confd_dir: "{{ playbook_dir }}/conf.d"
+#     al_include_confd_vars_list_type: "plain"
+#   tasks:
+#     - include_role:
+#         name: vbotka.ansible_lib
+#         tasks_from: al_include_confd_vars_list.yml
 # ------------------------------------------------------------------------------
 
 # Debug and Test input variable al_include_confd_dir

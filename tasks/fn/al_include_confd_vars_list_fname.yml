@@ -1,4 +1,7 @@
 ---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
 - name: "al_include_confd_vars_list_fname: Create al_local_fname"
   set_fact:
     al_local_fname: "{{ (item|basename|splitext)[0] }}"
@@ -15,4 +18,5 @@
     al_include_confd_vars_list: "{{ al_include_confd_vars_list + [
                                     {'fname': al_local_fname,
                                      'vars': al_local_var|json_query('*')} ] }}"
+# EOF
 ...
