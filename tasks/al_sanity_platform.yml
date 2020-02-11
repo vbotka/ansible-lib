@@ -37,7 +37,7 @@
 #     al_debug: True
 #     al_sanity_platform_gather_subset: False
 #     al_sanity_platform_fail: False
-#     al_sanity_platform_fail: False
+#     al_sanity_platform_version_fail: False
 #     al_sanity_platform_end_host: True
 #     al_sanity_platform_version_end_host: False
 #   tasks:
