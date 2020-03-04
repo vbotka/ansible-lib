@@ -96,7 +96,7 @@
   set_fact:
     my_not_installed_packages: "{{ my_not_installed_packages|default([]) + [item] }}"
   loop: "{{ al_sanity_packages_required[ansible_distribution]['default'] }}"
-  when: not item|intersect(my_installed_packages)
+  when: item|intersect(my_installed_packages)|length == 0
 - name: "al_sanity_packages: Debug. Display my_installed_packages."
   when: al_debug|bool
   debug:
@@ -111,7 +111,7 @@
   fail:
     msg: "[ERROR] Packages {{ my_not_installed_packages }}
           not installed in role {{ al_sanity_role_name }}"
-  when: my_not_installed_packages|default(false)|bool
+  when: my_not_installed_packages|default([])|length > 0
 
 # Debug. Passed.
 - name: "al_sanity_packages: Debug. Test required packages passed."
