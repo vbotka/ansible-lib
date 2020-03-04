@@ -17,6 +17,9 @@ al_sanity_ansible_version_fail: true
 al_sanity_ansible_version_end_host: false
 al_sanity_ansible_version_warning: true
 
+# al_sanity_packages
+al_sanity_packages_gather_subset: true
+
 # al_include_confd_vars_list
 al_include_confd_vars_list_type: "plain"
 al_include_confd_vars_list_options: ["plain", "fname"]

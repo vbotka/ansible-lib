@@ -1,0 +1,123 @@
+---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
+# ------------------------------------------------------------------------------
+# ansible_lib: al_sanity_packages
+#
+# Description: Test required packages are installed.
+#
+#   Test whether the required packages are installed. Display error
+#   message and fail if the required packages are not installed. See
+#   the parameters below.
+#
+# Input:
+#
+#   al_sanity_role_name .................. Name of the role
+#   al_sanity_packages_required .......... Required packages
+#   al_sanity_packages_gather_subset ..... Collect minimal subset by setup
+#
+# Output: None
+#
+# Example:
+#
+#   Do not collect minimal subset by setup (variables
+#   ansible_distribution_* have already been collected). If the item
+#   is a list at least one of the packages from the list must be
+#   installed.
+#
+#   vars:
+#     al_debug: true
+#     al_sanity_packages_gather_subset: false
+#     al_sanity_packages_required:
+#       Ubuntu:
+#         default:
+#           - ["python-openssl", "python-cryptography"]
+#           - ["acme-tiny"]
+#
+#   tasks:
+#     - set_fact:
+#         al_sanity_role_name: "{{ role_name }}"
+#     - include_role:
+#         name: vbotka.ansible_lib
+#         tasks_from: al_sanity_packages
+#
+# TODO:
+#
+#   * test versions of the packages (versions not tested atm)
+#   * test version of the platform (only default atm)
+#   * optionally meta end_host instead of fail
+#
+# ------------------------------------------------------------------------------
+
+- name: "al_sanity_packages: Fail when al_sanity_role_name not defined."
+  fail:
+    msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
+  when: al_sanity_role_name is undefined
+
+- name: "al_sanity_packages: Fail when al_sanity_packages_required not defined."
+  fail:
+    msg: "[ERROR] Mandatory variable al_sanity_packages_required not defined."
+  when: al_sanity_packages_required is undefined
+
+- name: "al_sanity_packages: Setup. Collect minimal subset."
+  setup:
+    gather_subset:
+      - '!all'
+  when: al_sanity_packages_gather_subset|bool
+
+# Debug
+- name: "al_sanity_packages: Debug. Print variables."
+  when: al_debug|bool
+  vars:
+    msg: |
+      ansible_distribution [{{ ansible_distribution }}]
+      ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
+      ansible_distribution_version [{{ ansible_distribution_version }}]
+      ansible_distribution_release [{{ ansible_distribution_release }}]
+      ansible_python_version [{{ ansible_python_version }}]
+
+      al_sanity_role_name [{{ al_sanity_role_name }}]
+      al_sanity_packages_gather_subset [{{ al_sanity_packages_gather_subset }}]
+
+      al_sanity_packages_required
+      {{ al_sanity_packages_required|to_yaml }}
+
+  debug:
+    msg: "{{ msg.split('\n') }}"
+
+# Find not installed packages
+- name: "al_sanity_packages: Collect installed packages."
+  package_facts:
+- name: "al_sanity_packages: Set list of installed packages."
+  set_fact:
+    my_installed_packages: "{{ ansible_facts.packages.keys()|list }}"
+- name: "al_sanity_packages: Set list of uninstalled packages."
+  set_fact:
+    my_not_installed_packages: "{{ my_not_installed_packages|default([]) + [item] }}"
+  loop: "{{ al_sanity_packages_required[ansible_distribution]['default'] }}"
+  when: not item|intersect(my_installed_packages)
+- name: "al_sanity_packages: Debug. Display my_installed_packages."
+  when: al_debug|bool
+  debug:
+    msg: "Installed packages: {{ my_installed_packages }}"
+- name: "al_sanity_packages: Debug. Display my_not_installed_packages."
+  when: al_debug|bool
+  debug:
+    msg: "Not installed packages: {{ my_not_installed_packages|default([]) }}"
+
+# ERROR. Fail.
+- name: "al_sanity_packages: Display ERROR required packages not installed. Fail."
+  fail:
+    msg: "[ERROR] Packages {{ my_not_installed_packages }}
+          not installed in role {{ al_sanity_role_name }}"
+  when: my_not_installed_packages|default(false)|bool
+
+# Debug. Passed.
+- name: "al_sanity_packages: Debug. Test required packages passed."
+  when: al_debug|bool
+  debug:
+    msg: "Role {{ al_sanity_role_name }} test required packages passed."
+
+# EOF
+...

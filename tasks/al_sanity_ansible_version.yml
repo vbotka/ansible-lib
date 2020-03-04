@@ -66,6 +66,7 @@
       ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
       ansible_distribution_version [{{ ansible_distribution_version }}]
       ansible_distribution_release [{{ ansible_distribution_release }}]
+      ansible_python_version [{{ ansible_python_version }}]
 
       al_sanity_role_name [{{ al_sanity_role_name }}]
       al_sanity_ansible_version_min [{{ al_sanity_ansible_version_min }}]
