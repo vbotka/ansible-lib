@@ -7,13 +7,13 @@
 #
 # Description: Create list of ansible-runer's job events.
 #
-#   ansible-runner records all job's events in the dictionary
+#   ansible-runner records all job's events in the directory
 #   artifacts/<ID>/job_events. Read files from this directory and
-#   create the list of the dictionaries with the job event's data.
+#   create a list of the dictionaries with the job event's data.
 #
 # Input:
 #
-#   al_runner_events_dir ........ Path to dictionary job_events
+#   al_runner_events_dir ........ Path to the directory job_events
 #
 # Output:
 #
@@ -37,6 +37,7 @@
 #       when: item.event == 'runner_on_failed'
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_runner_events.yml
 
 - name: "al_runner_events: Find files"
   find:
