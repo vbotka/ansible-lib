@@ -10,7 +10,7 @@
 # Input:
 #
 #   al_hosts_reachable_group ..... Group of reachable hosts (default: al_reachable)
-#   al_hosts_unreachable_group ... Group of reachable hosts (default: al_unreachable)
+#   al_hosts_unreachable_group ... Group of unreachable hosts (default: al_unreachable)
 #   al_hosts_connection_timeout .. Connection timeout (default: 10 seconds)
 #
 # Output:
