@@ -60,7 +60,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_find_newer.yml
 
-- name: "al_find_newer: Default varaibles."
+- name: "al_find_newer: Default variables."
   set_fact:
     al_find_newer_timestamp: "{{ al_find_newer_timestamp|
                                  default('/var/tmp/al-newer-timestamp') }}"
