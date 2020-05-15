@@ -44,7 +44,7 @@
     al_hosts_unreachable_group: "{{ al_hosts_unreachable_group|default('al_unreachable') }}"
     al_hosts_connection_timeout: "{{ al_hosts_connection_timeout|default('10') }}"
 
-- name: "al_hosts_reachable: Debug group {{ al_hosts_unreachable_group }}"
+- name: "al_hosts_reachable: Debug."
   vars:
     msg: |
       al_hosts_reachable_group [{{ al_hosts_reachable_group }}]
