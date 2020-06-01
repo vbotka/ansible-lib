@@ -1,0 +1,312 @@
+---
+# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ansible_lib: al_pws_user_host
+#
+# Description: Manage user's passwords at hosts by passwordstore
+#
+#   Retrieve, create, or update passwords of selected users at remote
+#   hosts by the passwordstore.org pass utility. It also retrieves
+#   YAML style keys stored as multilines in the passwordfile.
+#
+#
+# Input:
+#
+#   al_pws_query .......... List of passwordstore's queries [1]. (default: [])
+#   al_pws_create ......... New user and userpass will be created by pass if
+#                           doesn't not exist. (default: false)
+#   al_pws_idempotent_password_hash .. Make password_hash idempotent [5]
+#                           (default: true)
+#   al_pws_debug .......... Display debug info.
+#                           WARNING: userpass will be displayed
+#                           (default: false)
+#
+# Output:
+#
+#   al_pws_query_result ... List of passwordstore's queries with updated
+#                           attributes "userpass" [2,3] and "password" [4].
+#
+# Notes:
+#
+#   [1] See parameters of Ansible lookup plugin "passwordstore". Optionally
+#       set custom defaults. See first task of the playbook "Default variables".
+#   [2] If "usrpass" is omitted in the input "usrpass" will be retrieved
+#       from passwordstore and added to the dictionary al_pws_query.
+#   [3] A new "usrpass" will be created if it does not exist in
+#       passwordstore. (when al_pws_create: true)
+#   [4] Attribute "password" with encrypted userpass for the user module
+#       will be added to the dictionary "al_pws_query".
+#   [5] See Ansible "Encryption filters" e.g. random(seed=inventory_hostname).
+#
+#
+# Example 1: Update, or create userpass provided
+#
+#   Update passwords for users in the dictionary al_pws_query at all
+#   hosts in the group my_domain.
+#
+#   shell> cat playbook.yml
+#   - hosts: my_domain
+#     become: true
+#
+#     vars:
+#       al_pws_create: true
+#       al_pws_query:
+#         - name: user1
+#           overwrite: true
+#           userpass: user1_password
+#         - name: user2
+#           overwrite: true
+#           userpass: user2_password
+#
+#     tasks:
+#
+#       - name: Update passwords in passwordstore
+#         include_role:
+#           name: vbotka.ansible_lib
+#           tasks_from: al_pws_user_host.yml
+#
+#       - name: update passwords in FreeBSD hosts
+#         include_role:
+#           name: vbotka.freebsd_postinstall
+#           tasks_from: users.yml
+#         vars:
+#           freebsd_users: al_pws_query_result
+#         when: ansible_os_family == 'FreeBSD'
+#
+#       - name: update passwords in Linux hosts
+#         include_role:
+#           name: vbotka.linux_postinstall
+#           tasks_from: users.yml
+#         vars:
+#           lp_users: al_pws_query_result
+#         when: ansible_os_family == 'Debian'
+#   # EOF
+#
+#    "msg": [
+#        "al_pws_query_result",
+#        "-   name: user1",
+#        "    overwrite: true",
+#        "    password: $6$53844$JRx.AS ... 5e81",
+#        "    userpass: user1_password",
+#        "-   name: user2",
+#        "    overwrite: true",
+#        "    password: $6$51944$hCT7vK ... 5WM.",
+#        "    userpass: user2_password"
+#
+# Example 2: Retrieve userpass
+#
+#   Retrieve userpass create passwords for users in the dictionary
+#   al_pws_query at all hosts in the group my_domain.
+#
+#   shell> cat playbook.yml
+#   - hosts: my_domain
+#     become: true
+#
+#     vars:
+#       al_pws_query:
+#         - name: user1
+#         - name: user2
+#
+#     tasks:
+#
+#       - name: Retrieve userpass from passwordstore
+#         include_role:
+#           name: vbotka.ansible_lib
+#           tasks_from: al_pws_user_host.yml
+#   # EOF
+#
+#    "msg": [
+#        "al_pws_query_result",
+#        "-   name: user1",
+#        "    password: $6$53844$JRx.AS ... 5e81",
+#        "    userpass: user1_password",
+#        "-   name: user2",
+#        "    password: $6$51944$hCT7vK ... 5WM.",
+#        "    userpass: user2_password"
+#
+#
+# Troubleshooting:
+#
+# * Error: pass "gpg: decryption failed: No secret key"
+#   - gnupg: There is no assurance this key belongs to the named user
+#     https://stackoverflow.com/questions/33361068/
+#   - gopass: “gpg: decryption failed: No secret key”
+#     https://www.krenger.ch/blog/gopass-gpg-decryption-failed-no-secret-key/
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_pws_user_host.yml
+
+- name: "al_pws_user_host: Default variables."
+  set_fact:
+    al_pws_debug: "{{ al_pws_backup|default(false) }}"
+    al_pws_backup: "{{ al_pws_backup|default(false) }}"
+    al_pws_create: "{{ al_pws_create|default(false) }}"
+    al_pws_length: "{{ al_pws_length|default(16) }}"
+    al_pws_nosymbols: "{{ al_pws_nosymbols|default(false) }}"
+    al_pws_overwrite: "{{ al_pws_overwrite|default(false) }}"
+    al_pws_passwordstore: "{{ al_pws_passwordstore|default('~/.password-store') }}"
+    al_pws_returnall: "{{ al_pws_returnall|default(false) }}"
+    al_pws_subkey: "{{ al_pws_subkey|default('password') }}"
+    al_pws_idempotent_password_hash: "{{ al_pws_idempotent_password_hash|default(true) }}"
+    al_pws_query: "{{ al_pws_query|default([]) }}"
+
+- name: "al_pws_user_host: Debug."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      al_pws_backup [{{ al_pws_backup }}]
+      al_pws_create [{{ al_pws_create }}]
+      al_pws_length [{{ al_pws_length }}]
+      al_pws_nosymbols [{{ al_pws_nosymbols }}]
+      al_pws_overwrite [{{ al_pws_overwrite }}]
+      al_pws_passwordstore [{{ al_pws_passwordstore }}]
+      al_pws_returnall [{{ al_pws_returnall }}]
+      al_pws_subkey [{{ al_pws_subkey }}]
+      al_pws_idempotent_password_hash [{{ al_pws_idempotent_password_hash }}]
+      al_pws_query
+      {{ al_pws_query|to_nice_yaml }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+- name: "al_pws_user_host: Sanity of al_pws_query. Empty."
+  fail:
+    msg: "[ERROR] List of queries al_pws_query is empty."
+  when: number_of_items == 0
+  vars:
+    number_of_items: "{{ al_pws_query|length }}"
+
+- name: "al_pws_user_host: Sanity of al_pws_query. Attribute name is mandatory."
+  fail:
+    msg: "[ERROR] Attribute name is mandatory."
+  when: number_of_names != number_of_items
+  vars:
+    number_of_names: "{{ al_pws_query|json_query('[].name')|length }}"
+    number_of_items: "{{ al_pws_query|length }}"
+
+- name: "al_pws_user_host: Create passwordstore queries."
+  set_fact:
+    my_queries: "{{ my_queries|
+                    default({})|
+                    combine({item.name: my_query}) }}"
+  loop: "{{ al_pws_query }}"
+  loop_control:
+    label: "{{ item.name }}"
+  vars:
+    my_query: "{{ inventory_hostname }}/{{ item.name }}
+               backup={{ item.backup|default(al_pws_backup) }}
+               create={{ item.create|default(al_pws_create) }}
+               length={{ item.length|default(al_pws_length) }}
+               nosymbols={{ item.nosymbols|default(al_pws_nosymbols) }}
+               overwrite={{ item.overwrite|default(al_pws_overwrite) }}
+               returnall={{ item.returnall|default(al_pws_returnall) }}
+               subkey={{ item.subkey|default(al_pws_subkey) }}
+               {{ item.userpass is defined|
+                  ternary('userpass=' ~ item.userpass|default('UNDEF')|quote, '') }}
+               {{ item.directory is defined|
+                  ternary('directory=' ~ item.directory|default('UNDEF')|quote, '') }}"
+
+- name: "al_pws_user_host: Debug my_queries 1."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      my_queries|length [{{ my_queries|length }}]
+      my_queries (JSON)
+      {{ my_queries|to_nice_json }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+- name: "al_pws_user_host: Debug my_queries 2."
+  when: al_pws_debug|bool
+  debug:
+    msg: "{{ {item.key: item.value} }}"
+  loop: "{{ my_queries|dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "al_pws_user_host: Retrieve, create or update userpass in passwordstore."
+  set_fact:
+    my_userpass_dict: "{{ my_userpass_dict|
+                          default({})|
+                          combine({item.key: my_userpass}) }}"
+  loop: "{{ my_queries|dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    my_userpass: "{{ lookup('passwordstore', item.value) }}"
+
+- name: "al_pws_user_host: Debug my_userpass_dict."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      my_userpass_dict
+      {{ my_userpass_dict|to_nice_yaml }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+- name: "al_pws_user_host: Create dictionary with salt."
+  set_fact:
+    my_salt_dict: "{{ my_salt_dict|
+                      default({})|
+                      combine({item.name: my_salt}) }}"
+  loop: "{{ al_pws_query }}"
+  loop_control:
+    label: "{{ item.name }}"
+  vars:
+    my_salt: "{{ al_pws_idempotent_password_hash|
+                 ternary( 65534|random(seed=(item.name ~ inventory_hostname))|string,
+                          65534|random|string) }}"
+
+- name: "al_pws_user_host: Debug my_salt_dict."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      my_salt_dict
+      {{ my_salt_dict|to_nice_yaml }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+- name: "al_pws_user_host: Hash userpass to password."
+  set_fact:
+    my_password_dict: "{{ my_password_dict|
+                          default({})|
+                          combine({item.key: my_password}) }}"
+  loop: "{{ my_userpass_dict|dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    my_password: "{{ item.value|password_hash('sha512', my_salt_dict[item.key]) }}"
+
+
+- name: "al_pws_user_host: Debug my_password_dict."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      my_password_dict
+      {{ my_password_dict|to_nice_yaml }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+- name: "al_pws_user_host: Add attributes userpass and password."
+  set_fact:
+    al_pws_query_result: "{{ al_pws_query_result|
+                             default([]) +
+                             [item|
+                             combine({'userpass': my_userpass_dict[item.name]})|
+                             combine({'password': my_password_dict[item.name]})] }}"
+  loop: "{{ al_pws_query }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: "al_pws_user_host: al_pws_query_result."
+  when: al_pws_debug|bool
+  vars:
+    msg: |
+      al_pws_query_result
+      {{ al_pws_query_result|to_nice_yaml }}
+  debug:
+    msg: "{{ msg.split('\n')[:-1] }}"
+
+# EOF
+...
