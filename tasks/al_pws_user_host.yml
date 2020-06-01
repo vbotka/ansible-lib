@@ -15,8 +15,8 @@
 # Input:
 #
 #   al_pws_query .......... List of passwordstore's queries [1]. (default: [])
-#   al_pws_create ......... New user and userpass will be created by pass if
-#                           doesn't not exist. (default: false)
+#   al_pws_create ......... New userpass will be created by pass if it doesn't
+#                           exist. (default: false)
 #   al_pws_idempotent_password_hash .. Make password_hash idempotent [5]
 #                           (default: true)
 #   al_pws_debug .......... Display debug info.
@@ -41,10 +41,40 @@
 #   [5] See Ansible "Encryption filters" e.g. random(seed=inventory_hostname).
 #
 #
-# Example 1: Update, or create userpass provided
+# Example 1: Update userpass, or create it if does not exists
 #
-#   Update passwords for users in the dictionary al_pws_query at all
-#   hosts in the group my_domain.
+#   Update or create, if it does not exist, userpass for users in the
+#   dictionary al_pws_query at all hosts in the group my_domain. The
+#   utility pass will generate userpass. Store the userpass at
+#   controller only. Do not update passwords at hosts.
+#
+#   shell> cat playbook.yml
+#   - hosts: my_domain
+#     become: true
+#
+#     vars:
+#       al_pws_create: true
+#       al_pws_overwrite: true
+#       al_pws_query:
+#         - name: user1
+#         - name: user2
+#
+#     tasks:
+#
+#       - name: Update passwords in passwordstore
+#         include_role:
+#           name: vbotka.ansible_lib
+#           tasks_from: al_pws_user_host.yml
+#   # EOF
+#
+# Example 2: Update, or create userpass provided by the variable
+#
+
+#   Update or create, if it does not exist, userpass for users in the
+#   dictionary al_pws_query at all hosts in the group my_domain. The
+#   userpass is provided by the variable. Include tasks to update the
+#   passwords at hosts.
+
 #
 #   shell> cat playbook.yml
 #   - hosts: my_domain
@@ -95,7 +125,7 @@
 #        "    password: $6$51944$hCT7vK ... 5WM.",
 #        "    userpass: user2_password"
 #
-# Example 2: Retrieve userpass
+# Example 3: Retrieve userpass
 #
 #   Retrieve userpass create passwords for users in the dictionary
 #   al_pws_query at all hosts in the group my_domain.
