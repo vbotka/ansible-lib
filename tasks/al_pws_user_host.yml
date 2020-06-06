@@ -170,7 +170,7 @@
 
 - name: "al_pws_user_host: Default variables."
   set_fact:
-    al_pws_debug: "{{ al_pws_backup|default(false) }}"
+    al_pws_debug: "{{ al_pws_debug|default(false) }}"
     al_pws_backup: "{{ al_pws_backup|default(false) }}"
     al_pws_create: "{{ al_pws_create|default(false) }}"
     al_pws_length: "{{ al_pws_length|default(16) }}"
@@ -183,7 +183,6 @@
     al_pws_query: "{{ al_pws_query|default([]) }}"
 
 - name: "al_pws_user_host: Debug."
-  when: al_pws_debug|bool
   vars:
     msg: |
       al_pws_backup [{{ al_pws_backup }}]
@@ -199,6 +198,7 @@
       {{ al_pws_query|to_nice_yaml }}
   debug:
     msg: "{{ msg.split('\n')[:-1] }}"
+  when: al_pws_debug|bool
 
 - name: "al_pws_user_host: Sanity of al_pws_query. Empty."
   fail:
@@ -308,7 +308,6 @@
   vars:
     my_password: "{{ item.value|password_hash('sha512', my_salt_dict[item.key]) }}"
 
-
 - name: "al_pws_user_host: Debug my_password_dict."
   when: al_pws_debug|bool
   vars:
@@ -329,7 +328,7 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: "al_pws_user_host: al_pws_query_result."
+- name: "al_pws_user_host: Debug al_pws_query_result."
   when: al_pws_debug|bool
   vars:
     msg: |
