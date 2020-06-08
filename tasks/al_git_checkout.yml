@@ -72,6 +72,7 @@
     al_git_checkout_mode: "{{ al_git_checkout_mode|default('u=+rwX,g=+rX-w,o=-rwx') }}"
     al_git_checkout_repos_path: "{{ al_git_checkout_repos_path|default(my_default_path) }}"
     al_git_checkout_repos_file: "{{ al_git_checkout_repos_file|default('vars/repos.yml') }}"
+    al_debug: "{{ al_debug|default(false) }}"
 
 - name: "al_git_checkout: Include list of repos from {{ al_git_checkout_repos_file }}"
   include_vars: "{{ al_git_checkout_repos_file }}"

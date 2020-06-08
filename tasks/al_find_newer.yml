@@ -65,6 +65,7 @@
     al_find_newer_timestamp: "{{ al_find_newer_timestamp|
                                  default('/var/tmp/al-newer-timestamp') }}"
     al_find_newer_time: "{{ al_find_newer_time|default('mtime') }}"
+    al_debug: "{{ al_debug|default(false) }}"
 
 - name: "al_find_newer: Sanity al_find_newer_dir."
   fail:
