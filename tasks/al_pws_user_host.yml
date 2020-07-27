@@ -156,6 +156,12 @@
 #        "    password: $6$51944$hCT7vK ... 5WM.",
 #        "    userpass: user2_password"
 #
+# Notes:
+#
+# * This task will crash if a user's password is not present in the
+#   passwordstore, the creating is disabled 'al_pws_create: false',
+#   and the user's password is not disabled 'disabled_password: false'
+#   (default).
 #
 # Troubleshooting:
 #
@@ -215,11 +221,13 @@
     number_of_names: "{{ al_pws_query|json_query('[].name')|length }}"
     number_of_items: "{{ al_pws_query|length }}"
 
+- name: "al_pws_user_host: Create empty dictionary my_queries."
+  set_fact:
+    my_queries: {}
+
 - name: "al_pws_user_host: Create passwordstore queries."
   set_fact:
-    my_queries: "{{ my_queries|
-                    default({})|
-                    combine({item.name: my_query}) }}"
+    my_queries: "{{ my_queries|combine({item.name: my_query}) }}"
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
@@ -236,6 +244,7 @@
                   ternary('userpass=' ~ item.userpass|default('UNDEF')|quote, '') }}
                {{ item.directory is defined|
                   ternary('directory=' ~ item.directory|default('UNDEF')|quote, '') }}"
+  when: not item.disabled_password|default('false')
 
 - name: "al_pws_user_host: Debug my_queries 1."
   when: al_pws_debug|bool
@@ -255,11 +264,13 @@
   loop_control:
     label: "{{ item.key }}"
 
+- name: "al_pws_user_host: Create empty dictionary my_userpass_dict."
+  set_fact:
+    my_userpass_dict: {}
+
 - name: "al_pws_user_host: Retrieve, create or update userpass in passwordstore."
   set_fact:
-    my_userpass_dict: "{{ my_userpass_dict|
-                          default({})|
-                          combine({item.key: my_userpass}) }}"
+    my_userpass_dict: "{{ my_userpass_dict|combine({item.key: my_userpass}) }}"
   loop: "{{ my_queries|dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -275,11 +286,13 @@
   debug:
     msg: "{{ msg.split('\n')[:-1] }}"
 
+- name: "al_pws_user_host: Create empty dictionary my_salt_dict."
+  set_fact:
+    my_salt_dict: {}
+
 - name: "al_pws_user_host: Create dictionary with salt."
   set_fact:
-    my_salt_dict: "{{ my_salt_dict|
-                      default({})|
-                      combine({item.name: my_salt}) }}"
+    my_salt_dict: "{{ my_salt_dict|combine({item.name: my_salt}) }}"
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
@@ -297,11 +310,13 @@
   debug:
     msg: "{{ msg.split('\n')[:-1] }}"
 
+- name: "al_pws_user_host: Create empty dictionary my_password_dict."
+  set_fact:
+    my_password_dict: {}
+
 - name: "al_pws_user_host: Hash userpass to password."
   set_fact:
-    my_password_dict: "{{ my_password_dict|
-                          default({})|
-                          combine({item.key: my_password}) }}"
+    my_password_dict: "{{ my_password_dict|combine({item.key: my_password}) }}"
   loop: "{{ my_userpass_dict|dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -317,16 +332,20 @@
   debug:
     msg: "{{ msg.split('\n')[:-1] }}"
 
+- name: "al_pws_user_host: Create empy list al_pws_query_result."
+  set_fact:
+    al_pws_query_result: []
+
 - name: "al_pws_user_host: Add attributes userpass and password."
   set_fact:
-    al_pws_query_result: "{{ al_pws_query_result|
-                             default([]) +
+    al_pws_query_result: "{{ al_pws_query_result +
                              [item|
                              combine({'userpass': my_userpass_dict[item.name]})|
                              combine({'password': my_password_dict[item.name]})] }}"
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
+  when: not item.disabled_password|default('false')
 
 - name: "al_pws_user_host: Debug al_pws_query_result."
   when: al_pws_debug|bool
