@@ -42,11 +42,28 @@
 #         name: vbotka.ansible_lib
 #         tasks_from: al_sanity_packages
 #
-# TODO:
+# [TODO]
 #
-#   * test versions of the packages (versions not tested atm)
 #   * test version of the platform (only default atm)
 #   * optionally meta end_host instead of fail
+#   * test versions of the packages (versions not tested atm)
+#     vars:
+#       - pkg_list:
+#           - nginx-1.12.2
+#           - zip-3.0
+#     tasks:
+#       - package_facts:
+#       - debug:
+#           msg: "Found {{ item.0 }}-{{ item.1 }}"
+#         with_together:
+#           - "{{ pkg_list|
+#                 map('regex_replace','^(.*)-(.*)$', '\\1')|list }}"
+#           - "{{ pkg_list|
+#                 map('regex_replace','^(.*)-(.*)$', '\\2')|list }}"
+#         when: pkgv|map('regex_search', '^' ~ item.1)|list|length > 0
+#         vars:
+#           pkgn: "{{ ansible_facts.packages[item.0]|default([]) }}"
+#           pkgv: "{{ pkgn|map(attribute='version')|list }}"
 #
 # ------------------------------------------------------------------------------
 
@@ -92,7 +109,7 @@
 - name: "al_sanity_packages: Set list of installed packages."
   set_fact:
     my_installed_packages: "{{ ansible_facts.packages.keys()|list }}"
-- name: "al_sanity_packages: Set list of uninstalled packages."
+- name: "al_sanity_packages: Set list of not installed packages."
   set_fact:
     my_not_installed_packages: "{{ my_not_installed_packages|default([]) + [item] }}"
   loop: "{{ al_sanity_packages_required[ansible_distribution]['default'] }}"
