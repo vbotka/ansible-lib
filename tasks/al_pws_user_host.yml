@@ -244,7 +244,7 @@
                   ternary('userpass=' ~ item.userpass|default('UNDEF')|quote, '') }}
                {{ item.directory is defined|
                   ternary('directory=' ~ item.directory|default('UNDEF')|quote, '') }}"
-  when: not item.disabled_password|default('false')
+  when: not item.disabled_password|default(false)
 
 - name: "al_pws_user_host: Debug my_queries 1."
   when: al_pws_debug|bool
@@ -345,7 +345,7 @@
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
-  when: not item.disabled_password|default('false')
+  when: not item.disabled_password|default(false)
 
 - name: "al_pws_user_host: Debug al_pws_query_result."
   when: al_pws_debug|bool
