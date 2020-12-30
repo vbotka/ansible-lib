@@ -23,6 +23,9 @@
 #   al_sanity_platform_version_end_host .. End host when version not supported
 #   al_sanity_platform_warning ........... Print warning when platform or
 #                                          version not supported. Continue play.
+#   al_supported_versions_override ....... Override meta platform versions.
+#                                          Galaxy does not always enable
+#                                          supported OS versions in time
 #
 # Output: None
 #
@@ -31,7 +34,7 @@
 #   Do not collect minimal subset by setup (variables
 #   ansible_distribution_* have already been collected). End host when
 #   platform is not supported. Ignore version. Print warning. Print
-#   debug messages.
+#   debug messages. Override supported platform versions.
 #
 #   vars:
 #     al_debug: True
@@ -40,6 +43,7 @@
 #     al_sanity_platform_version_fail: False
 #     al_sanity_platform_end_host: True
 #     al_sanity_platform_version_end_host: False
+#     al_supported_versions_override: ['11.3', '11.4', '12.0', '12.1', '12.2']
 #   tasks:
 #     - include_vars:
 #         file: meta/main.yml
@@ -98,6 +102,7 @@
       al_sanity_role_name [{{ al_sanity_role_name }}]
       al_supported_platforms {{ al_supported_platforms }}
       al_supported_versions {{ al_supported_versions }}
+      al_supported_versions_override {{ al_supported_versions_override }}
 
       al_sanity_platform_gather_subset [{{ al_sanity_platform_gather_subset }}]
       al_sanity_platform_fail [{{ al_sanity_platform_fail }}]
@@ -151,6 +156,7 @@
           by role {{ al_sanity_role_name }}."
   when:
     - al_sanity_platform_version_test not in al_supported_versions
+    - al_sanity_platform_version_test not in al_supported_versions_override
     - al_sanity_platform_version_fail|bool
 # ERROR. End host.
 - name: "al_sanity_platform: Test version is supported. End host if not."
