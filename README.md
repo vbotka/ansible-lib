@@ -4,14 +4,14 @@
 
 [Ansible role.](https://galaxy.ansible.com/vbotka/ansible_lib/) Library of Ansible tasks.
 
-Please feel free to [share your feedback and report issues](https://github.com/vbotka/ansible-lib/issues).
+Feel free to [share your feedback and report issues](https://github.com/vbotka/ansible-lib/issues). Contributions are welcome.
 
 
 ## Description
 
-Do not run this role. It's a collection of independent tasks. The purpose of this role is to provide a library of reusable tasks to be included in playbooks and other roles.
+Do not run this role. It's a collection of independent tasks. The purpose of this role is providing a library of reusable tasks which can be included in playbooks and other roles.
 
-See the tasks' descriptions end examples.
+See the descriptions of the tasks end examples.
 
 
 ## License
