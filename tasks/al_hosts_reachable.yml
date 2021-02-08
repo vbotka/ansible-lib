@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_hosts_reachable
 #
 # Description: Create groups of reachable and unreachable hosts.
@@ -35,7 +35,7 @@
 #       - debug:
 #           var: inventory_hostname
 #
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_hosts_reachable.yml
 
 - name: "al_hosts_reachable: Default variables."

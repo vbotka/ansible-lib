@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 - name: "al_include_sanity_platform_test_vars: Set al_sanity_platform_test"

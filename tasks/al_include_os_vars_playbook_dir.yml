@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_os_vars_playbook_dir
 #
 # Description: Include OS specific variables from playbook_dir
@@ -17,9 +17,10 @@
 #     - include_role:
 #         name: vbotka.ansible_lib
 #         tasks_from: al_include_os_vars_playbook_dir.yml
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_playbook_dir.yml
 
-# Defaults variables
+# Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
@@ -31,7 +32,7 @@
         - "defaults.yml"
       paths: "{{ playbook_dir }}/vars/defaults"
 
-# Custom variables
+# Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
   include_vars: "{{ item }}"
   with_first_found:

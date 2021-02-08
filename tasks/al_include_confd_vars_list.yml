@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_confd_vars_list
 #
 # Description: Create list of vars from files in al_include_confd_dir
@@ -27,9 +27,10 @@
 #     - include_role:
 #         name: vbotka.ansible_lib
 #         tasks_from: al_include_confd_vars_list.yml
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_confd_vars_list.yml
 
-# Debug and Test input variable al_include_confd_dir
+# Debug and Test input variable al_include_confd_dir - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Debug"
   when: al_debug|bool
   vars:
@@ -53,7 +54,7 @@
   fail:
     msg: "Unknown type of al_include_confd_vars_list_type. End of play."
 
-# List of configuration files
+# List of configuration files - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Find configuration files"
   find:
     file_type: file
@@ -70,7 +71,7 @@
   debug:
     var: al_local_path_list
 
-# List of configuration links
+# List of configuration links - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Find configuration links"
   find:
     file_type: link
@@ -86,7 +87,7 @@
   debug:
     var: al_local_path_list
 
-# Include vars from configuration paths and
+# Include vars from configuration paths and - - - - - - - - - - - - - - - - - - - - - - - -
 # Create output variable al_include_confd_vars_list
 - name: "al_include_confd_vars_list: Create empty al_include_confd_vars_list"
   set_fact:

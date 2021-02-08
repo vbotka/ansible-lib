@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_os_vars_path
 #
 # Description: Include OS specific variables from al_os_vars_path
@@ -30,9 +30,10 @@
 #      "with_first_found" in vars.
 #   3) Variables in vars/main.yml will be ovewritten by the file from
 #      the list "with_first_found".
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_path.yml
 
-# Debug and Test input variable al_os_vars_path
+# Debug and Test input variable al_os_vars_path - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Debug"
   when: al_debug|bool
   vars:
@@ -45,7 +46,7 @@
   fail:
     msg: Variable al_os_vars_path not defined. End of play.
 
-# Defaults variables
+# Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
   include_vars: "{{ item }}"
   with_first_found:
@@ -58,7 +59,7 @@
       paths: "{{ al_os_vars_path }}/vars/defaults"
       skip: true
 
-# Custom variables
+# Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
   include_vars: "{{ item }}"
   with_first_found:

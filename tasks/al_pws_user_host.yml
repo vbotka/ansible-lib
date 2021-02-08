@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_pws_user_host
 #
 # Description: Manage user's passwords at hosts by passwordstore
@@ -171,7 +171,7 @@
 #   - gopass: “gpg: decryption failed: No secret key”
 #     https://www.krenger.ch/blog/gopass-gpg-decryption-failed-no-secret-key/
 #
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_pws_user_host.yml
 
 - name: "al_pws_user_host: Default variables."

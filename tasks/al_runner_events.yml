@@ -2,7 +2,7 @@
 # All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_runner_events
 #
 # Description: Create list of ansible-runer's job events.
@@ -36,7 +36,7 @@
 #         label: "{{ item.counter }}"
 #       when: item.event == 'runner_on_failed'
 #
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_runner_events.yml
 
 - name: "al_runner_events: Find files"

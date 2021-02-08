@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_sanity_packages
 #
 # Description: Test required packages are installed.
@@ -65,7 +65,7 @@
 #           pkgn: "{{ ansible_facts.packages[item.0]|default([]) }}"
 #           pkgv: "{{ pkgn|map(attribute='version')|list }}"
 #
-# ------------------------------------------------------------------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "al_sanity_packages: Fail when al_sanity_role_name not defined."
   fail:
@@ -83,7 +83,7 @@
       - '!all'
   when: al_sanity_packages_gather_subset|bool
 
-# Debug
+# Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Debug. Print variables."
   when: al_debug|bool
   vars:
@@ -103,7 +103,7 @@
   debug:
     msg: "{{ msg.split('\n') }}"
 
-# Find not installed packages
+# Find not installed packages - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Collect installed packages."
   package_facts:
 - name: "al_sanity_packages: Set list of installed packages."
@@ -123,14 +123,14 @@
   debug:
     msg: "Not installed packages: {{ my_not_installed_packages|default([]) }}"
 
-# ERROR. Fail.
+# ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Display ERROR required packages not installed. Fail."
   fail:
     msg: "[ERROR] Packages {{ my_not_installed_packages }}
           not installed in role {{ al_sanity_role_name }}"
   when: my_not_installed_packages|default([])|length > 0
 
-# Debug. Passed.
+# Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Debug. Test required packages passed."
   when: al_debug|bool
   debug:
