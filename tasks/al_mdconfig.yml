@@ -83,7 +83,7 @@
                           combine({array.3: {'node': array.1,
                                              'size': array.2,
                                              'unit': unit}}) }}"
-  loop: "{{ result.stdout_lines }}"
+  loop: "{{ result.stdout_lines|default([]) }}"
   loop_control:
     loop_var: al_item
   vars:
@@ -105,6 +105,7 @@
         al_mdconfig_devs: "{{ al_mdconfig_devs|
                               combine({al_mdconfig_file: {'node': 'vnode',
                                                           'unit': result.stdout[2:]}}) }}"
+      when: result.stdout|default('')|length > 0
   rescue:
     - name: "al_mdconfig: Rescue failed attached memory disk"
       fail:
