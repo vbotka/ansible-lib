@@ -19,6 +19,8 @@
 #                           exist. (default: false)
 #   al_pws_idempotent_password_hash .. Make password_hash idempotent [5]
 #                           (default: true)
+#   al_pws_hostname_var ... Name of the variable with the name of the host [6]
+#                           (default: inventory_hostname)
 #   al_pws_debug .......... Display debug info.
 #                           WARNING: userpass will be displayed
 #                           (default: false)
@@ -39,6 +41,10 @@
 #   [4] Attribute "password" with encrypted userpass for the user module
 #       will be added to the dictionary "al_pws_query_result".
 #   [5] See Ansible "Encryption filters" e.g. random(seed=inventory_hostname).
+#   [6] The variable "al_pws_hostname_var" is used to create pass-name (see man pass) "{{
+#       lookup('vars', al_pws_hostname_var) }}/user". The default value is "inventory_hostname. Other
+#       options include "ansible_fqdn", "ansible_hostname", "ansible_nodename", or any other custom
+#       variable.
 #
 #
 # Example 1: Update userpass, or create it if does not exists
@@ -186,6 +192,7 @@
     al_pws_returnall: "{{ al_pws_returnall|default(false) }}"
     al_pws_subkey: "{{ al_pws_subkey|default('password') }}"
     al_pws_idempotent_password_hash: "{{ al_pws_idempotent_password_hash|default(true) }}"
+    al_pws_hostname_var: "{{ al_pws_hostname_var|default('inventory_hostname') }}"
     al_pws_query: "{{ al_pws_query|default([]) }}"
 
 - name: "al_pws_user_host: Debug."
@@ -200,6 +207,7 @@
       al_pws_returnall [{{ al_pws_returnall }}]
       al_pws_subkey [{{ al_pws_subkey }}]
       al_pws_idempotent_password_hash [{{ al_pws_idempotent_password_hash }}]
+      al_pws_hostname_var [{{ al_pws_hostname_var }}]
       al_pws_query
       {{ al_pws_query|to_nice_yaml }}
   debug:
@@ -222,7 +230,7 @@
     number_of_names: "{{ al_pws_query|json_query('[].name')|length }}"
     number_of_items: "{{ al_pws_query|length }}"
 
-# Create queries to passwordsotre - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Create queries to passwordstore - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_queries."
   set_fact:
     my_queries: {}
@@ -234,7 +242,8 @@
   loop_control:
     label: "{{ item.name }}"
   vars:
-    my_query: "{{ inventory_hostname }}/{{ item.name }}
+    my_hostname: "{{ lookup('vars', al_pws_hostname_var) }}"
+    my_query: "{{ my_hostname }}/{{ item.name }}
                backup={{ item.backup|default(al_pws_backup) }}
                create={{ item.create|default(al_pws_create) }}
                length={{ item.length|default(al_pws_length) }}
@@ -246,7 +255,10 @@
                   ternary('userpass=' ~ item.userpass|default('UNDEF')|quote, '') }}
                {{ item.directory is defined|
                   ternary('directory=' ~ item.directory|default('UNDEF')|quote, '') }}"
-  when: not item.disabled_password|default(false)
+  when:
+    - not item.disabled_password|default(false)
+    - item.shell|default('') is not search('nologin')
+    - item.state|default('present') is match('present')
 
 - name: "al_pws_user_host: Debug my_queries 1."
   when: al_pws_debug|bool
@@ -300,6 +312,10 @@
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
+  when:
+    - not item.disabled_password|default(false)
+    - item.shell|default('') is not search('nologin')
+    - item.state|default('present') is match('present')
   vars:
     my_salt: "{{ al_pws_idempotent_password_hash|
                  ternary( 65534|random(seed=(item.name ~ inventory_hostname))|string,
@@ -351,7 +367,10 @@
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
-  when: not item.disabled_password|default(false)
+  when:
+    - not item.disabled_password|default(false)
+    - item.shell|default('') is not search('nologin')
+    - item.state|default('present') is match('present')
 
 - name: "al_pws_user_host: Debug al_pws_query_result."
   when: al_pws_debug|bool
