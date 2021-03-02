@@ -1,13 +1,12 @@
 # ansible_lib
 
-[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)
-[![Build Status](https://travis-ci.org/vbotka/ansible-lib.svg?branch=master)](https://travis-ci.org/vbotka/ansible-lib)
+[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)[![Build Status](https://travis-ci.org/vbotka/ansible-lib.svg?branch=master)](https://travis-ci.org/vbotka/ansible-lib)
 
 [Ansible role.](https://galaxy.ansible.com/vbotka/ansible_lib/) Library of Ansible tasks.
 
-Feel free to [share your feedback and report
-issues](https://github.com/vbotka/ansible-lib/issues). [Contributions are
-welcome](https://github.com/firstcontributions/first-contributions).
+Feel free to [share your feedback and report issues](https://github.com/vbotka/ansible-lib/issues).
+
+[Contributions are welcome](https://github.com/firstcontributions/first-contributions).
 
 
 ## Description
