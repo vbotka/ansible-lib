@@ -2,7 +2,7 @@
 # ansible_lib defaults
 
 al_debug: false
-al_backup_conf: false
+al_backup: false
 
 # al_sanity_platform
 al_sanity_platform_fail: true
