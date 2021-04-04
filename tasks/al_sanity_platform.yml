@@ -88,9 +88,8 @@
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_platform: Debug. Print variables."
-  when: al_debug|bool
   vars:
-    msg: |
+    msg: |-
       ansible_distribution [{{ ansible_distribution }}]
       ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
       ansible_distribution_version [{{ ansible_distribution_version }}]
@@ -116,6 +115,7 @@
       {{ galaxy_info.platforms|to_nice_yaml }}
   debug:
     msg: "{{ msg.split('\n') }}"
+  when: al_debug|bool
 
 # Test platform - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

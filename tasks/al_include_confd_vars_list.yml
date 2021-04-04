@@ -34,7 +34,7 @@
 - name: "al_include_confd_vars_list: Debug"
   when: al_debug|bool
   vars:
-    msg: |
+    msg: |-
       al_include_confd_dir [ {{ al_include_confd_dir|default('NOT_DEFINED') }} ]
       al_include_confd_vars_list_type [ {{ al_include_confd_vars_list_type }} ]
       al_include_confd_patterns [ {{ al_include_confd_patterns }} ]

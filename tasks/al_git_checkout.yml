@@ -78,7 +78,7 @@
 
 - name: "al_git_checkout: Debug."
   vars:
-    msg: |
+    msg: |-
       al_git_checkout_module [{{ al_git_checkout_module }}]
       al_git_checkout_git_user [{{ al_git_checkout_git_user }}]
       al_git_checkout_user [{{ al_git_checkout_user }}]

@@ -37,10 +37,10 @@
 - name: "al_include_os_vars_path: Debug"
   when: al_debug|bool
   vars:
-    msg: |
+    msg: |-
       al_os_vars_path [{{ al_os_vars_path|default('NOT_DEFINED') }}]
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
 - name: "al_include_os_vars_path: End of play when al_os_vars_path not defined"
   when: al_os_vars_path is not defined
   fail:

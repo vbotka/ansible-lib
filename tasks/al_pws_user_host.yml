@@ -197,7 +197,7 @@
 
 - name: "al_pws_user_host: Debug."
   vars:
-    msg: |
+    msg: |-
       al_pws_backup [{{ al_pws_backup }}]
       al_pws_create [{{ al_pws_create }}]
       al_pws_length [{{ al_pws_length }}]
@@ -211,7 +211,7 @@
       al_pws_query
       {{ al_pws_query|to_nice_yaml }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 # Sanity  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -261,14 +261,14 @@
     - item.state|default('present') is match('present')
 
 - name: "al_pws_user_host: Debug my_queries 1."
-  when: al_pws_debug|bool
   vars:
-    msg: |
+    msg: |-
       my_queries|length [{{ my_queries|length }}]
       my_queries (JSON)
       {{ my_queries|to_nice_json }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
+  when: al_pws_debug|bool
 
 - name: "al_pws_user_host: Debug my_queries 2."
   when: al_pws_debug|bool
@@ -293,13 +293,13 @@
     my_userpass: "{{ lookup('passwordstore', item.value) }}"
 
 - name: "al_pws_user_host: Debug my_userpass_dict."
-  when: al_pws_debug|bool
   vars:
-    msg: |
+    msg: |-
       my_userpass_dict
       {{ my_userpass_dict|to_nice_yaml }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
+  when: al_pws_debug|bool
 
 # Create salt dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_salt_dict."
@@ -322,13 +322,13 @@
                           65534|random|string) }}"
 
 - name: "al_pws_user_host: Debug my_salt_dict."
-  when: al_pws_debug|bool
   vars:
-    msg: |
+    msg: |-
       my_salt_dict
       {{ my_salt_dict|to_nice_yaml }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
+  when: al_pws_debug|bool
 
 # Hash passwords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_password_dict."
@@ -345,13 +345,13 @@
     my_password: "{{ item.value|password_hash('sha512', my_salt_dict[item.key]) }}"
 
 - name: "al_pws_user_host: Debug my_password_dict."
-  when: al_pws_debug|bool
   vars:
-    msg: |
+    msg: |-
       my_password_dict
       {{ my_password_dict|to_nice_yaml }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
+  when: al_pws_debug|bool
 
 # Create return dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empy list al_pws_query_result."
@@ -373,13 +373,13 @@
     - item.state|default('present') is match('present')
 
 - name: "al_pws_user_host: Debug al_pws_query_result."
-  when: al_pws_debug|bool
   vars:
-    msg: |
+    msg: |-
       al_pws_query_result
       {{ al_pws_query_result|to_nice_yaml }}
   debug:
-    msg: "{{ msg.split('\n')[:-1] }}"
+    msg: "{{ msg.split('\n') }}"
+  when: al_pws_debug|bool
 
 # EOF
 ...
