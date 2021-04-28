@@ -1,0 +1,168 @@
+---
+# All rights reserved (c) 2021, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ansible_lib: al_bsd_service_facts
+#
+# Synopsis: The module service_facts doesn't work in FreeBSD because
+# the script /usr/sbin/service doesn't support 'service --status-all'.
+# This task will collect the service facts and will create the dictionary.
+# Example of returned facts from ansible.builtin.service_facts
+#
+#    "ansible_facts.services": {
+#        "ModemManager.service": {
+#            "name": "ModemManager.service", 
+#            "source": "systemd", 
+#            "state": "inactive", 
+#            "status": "disabled"
+#        }, 
+#        "apache2": {
+#            "name": "apache2", 
+#            "source": "sysv", 
+#            "state": "stopped"
+#        }, 
+#        "apache2.service": {
+#            "name": "apache2.service", 
+#            "source": "systemd", 
+#            "state": "inactive", 
+#            "status": "disabled"
+#        }
+#    }
+#
+# Description: Runs init scripts, in alphabetical order, with the
+# onestatus command.
+#
+# Input:
+#
+#   al_bsd_service_paths ....... List of paths to the scripts. All scripts will
+#                                be used if this variable is missing or empty.
+#
+# Output:
+#
+#   al_ansible_facts_services .. dictionary of services
+#
+# Example 1: Get status of all services
+#
+#   shell> cat playbook.yml
+#   - hosts: srv
+#     become: true
+#     tasks:
+#       - include_role:
+#           name: vbotka.ansible_lib
+#           tasks_from: al_bsd_service_facts
+#       - name: Display status of services
+#         debug:
+#           var: al_ansible_facts_services
+#   # EOF
+#
+#
+# Example 2: Get status of selected services
+#
+#   shell> cat playbook.yml
+#   - hosts: srv
+#     become: true
+#         al_bsd_service_paths:
+#           - /usr/local/etc/rc.d/cupsd
+#           - /etc/rc.d/zfs
+#           - /usr/local/etc/rc.d/apache24
+#     tasks:
+#       - include_role:
+#           name: vbotka.ansible_lib
+#           tasks_from: al_bsd_service_facts
+#       - name: Display status of services
+#         debug:
+#           var: al_ansible_facts_services
+#   # EOF
+#
+#   Result:
+#
+#     al_ansible_facts_services:
+#       apache24:
+#         state: running
+#       cupsd:
+#         state: stopped
+#       zfs:
+#         state: unknown
+#
+# [TODO]
+#
+#   * Add other states: active, inactive
+#   * Add attributes: name, source, status
+#   * Find all rc scripts user-friendly (excludes: *~ ...)
+#   * Fix failed service onestatus reported ignored, should be reported ok
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_bsd_service_facts.yml
+
+- name: "al_bsd_service_facts: Create list al_bsd_service_paths"
+  block:
+    - name: "al_bsd_service_facts: Find all rc scripts"
+      find:
+        paths:
+          - /etc/rc.d
+          - /usr/local/etc/rc.d
+      register: rc_scripts
+    - name: "al_bsd_service_facts: Set al_bsd_service_paths"
+      set_fact:
+        al_bsd_service_paths: "{{ rc_scripts.files|map(attribute='path')|list }}"
+  when: al_bsd_service_paths|default([])|length == 0
+
+- name: "al_bsd_service_facts: Debug al_bsd_service_paths"
+  debug:
+    var: al_bsd_service_paths|sort
+  when: al_debug| bool
+
+- name: "al_bsd_service_facts: Get onestatus"
+  command: "{{ item }} onestatus"
+  register: service_status
+  loop: "{{ al_bsd_service_paths|sort }}"
+  ignore_errors: true
+  changed_when: false
+
+- name: "al_bsd_service_facts: Debug service_status"
+  debug:
+    msg: "{{ service_status }}"
+  when: al_debug| bool
+
+- name: "al_bsd_service_facts: Set empty al_ansible_facts_services"
+  set_fact:
+    al_ansible_facts_services: {}
+
+- name: "al_bsd_service_facts: Select unknown states"
+  set_fact:
+    al_ansible_facts_services: "{{ al_ansible_facts_services|
+                                   combine({(item.item|basename): {'state': 'unknown'}}) }}"
+  loop: "{{ service_status.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when:
+    - item.rc != 0
+    - item.stderr_lines|length > 0
+
+- name: "al_bsd_service_facts: Select stopped states"
+  set_fact:
+    al_ansible_facts_services: "{{ al_ansible_facts_services|
+                                   combine({item.item|basename: {'state': 'stopped'}}) }}"
+  loop: "{{ service_status.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when:
+    - item.rc == 1
+    - item.stderr_lines|length == 0
+    - item.stdout is search("running")
+
+- name: "al_bsd_service_facts: Select running states"
+  set_fact:
+    al_ansible_facts_services: "{{ al_ansible_facts_services|
+                                   combine({item.item|basename: {'state': 'running'}}) }}"
+  loop: "{{ service_status.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when:
+    - item.rc == 0
+    - item.stderr_lines|length == 0
+    - item.stdout is search("running")
+
+# EOF
+...
