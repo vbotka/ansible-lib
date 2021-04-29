@@ -33,6 +33,10 @@
 # Description: Runs init scripts, in alphabetical order, with the
 # onestatus command.
 #
+# Notes:
+#
+#   - Does not support check mode
+#
 # Input:
 #
 #   al_bsd_service_paths ....... List of paths to the scripts. All scripts will
@@ -51,9 +55,10 @@
 #       - include_role:
 #           name: vbotka.ansible_lib
 #           tasks_from: al_bsd_service_facts
+#         when: not ansible_check_mode
 #       - name: Display status of services
 #         debug:
-#           var: al_ansible_facts_services
+#           var: al_ansible_facts_services|default({})
 #   # EOF
 #
 #
@@ -70,9 +75,10 @@
 #       - include_role:
 #           name: vbotka.ansible_lib
 #           tasks_from: al_bsd_service_facts
+#         when: not ansible_check_mode
 #       - name: Display status of services
 #         debug:
-#           var: al_ansible_facts_services
+#           var: al_ansible_facts_services|default({})
 #   # EOF
 #
 #   Result:
