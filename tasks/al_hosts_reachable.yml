@@ -39,7 +39,7 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_hosts_reachable.yml
 
 - name: "al_hosts_reachable: Default variables."
-  set_fact:
+  ansible.builtin.set_fact:
     al_hosts_reachable_group: "{{ al_hosts_reachable_group|default('al_reachable') }}"
     al_hosts_unreachable_group: "{{ al_hosts_unreachable_group|default('al_unreachable') }}"
     al_hosts_connection_timeout: "{{ al_hosts_connection_timeout|default(10) }}"
@@ -51,22 +51,22 @@
       al_hosts_reachable_group [{{ al_hosts_reachable_group }}]
       al_hosts_unreachable_group [{{ al_hosts_unreachable_group }}]
       al_hosts_connection_timeout [{{ al_hosts_connection_timeout }}]
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
 
 - name: "al_hosts_reachable: Wait for connection and set variable."
   block:
     - name: "al_hosts_reachable: Wait for connection."
-      wait_for_connection:
+      ansible.builtin.wait_for_connection:
         timeout: "{{ al_hosts_connection_timeout }}"
   rescue:
     - name: "al_hosts_reachable: Rescue debug."
-      debug:
+      ansible.builtin.debug:
         msg: "[ERROR] Can not connect to {{ inventory_hostname }}"
       when: al_debug|bool
     - name: "al_hosts_reachable: Rescue set variable my_host_reachable False."
-      set_fact:
+      ansible.builtin.set_fact:
         my_host_reachable: false
     - name: "al_hosts_reachable: Rescue meta clear errors."
       meta: clear_host_errors
@@ -74,23 +74,23 @@
       meta: end_host
 
 - name: "al_hosts_reachable: Debug connected."
-  debug:
+  ansible.builtin.debug:
     msg: "[OK] Connnected to {{ inventory_hostname }}"
   when: al_debug|bool
 
 - name: "al_hosts_reachable: Set variable my_host_reachable True."
-  set_fact:
+  ansible.builtin.set_fact:
     my_host_reachable: true
 
 - name: "al_hosts_reachable: Add hosts to group {{ al_hosts_reachable_group }}"
-  add_host:
+  ansible.builtin.add_host:
     name: "{{ item }}"
     groups: "{{ al_hosts_reachable_group }}"
   loop: "{{ hostvars|dict2items|json_query('[?value.my_host_reachable].key') }}"
   run_once: true
 
 - name: "al_hosts_reachable: Add hosts to group {{ al_hosts_unreachable_group }}"
-  add_host:
+  ansible.builtin.add_host:
     name: "{{ item }}"
     groups: "{{ al_hosts_unreachable_group }}"
   loop: "{{ hostvars.keys()|list|difference(groups[al_hosts_reachable_group]) }}"
@@ -101,7 +101,7 @@
     msg: |-
       Group: {{ al_hosts_reachable_group }}
       {{ groups[al_hosts_reachable_group]|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when:
     - al_debug|bool
@@ -113,7 +113,7 @@
     msg: |-
       Group: {{ al_hosts_unreachable_group }}
       {{ groups[al_hosts_unreachable_group]|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when:
     - al_debug|bool

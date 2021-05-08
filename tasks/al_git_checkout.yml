@@ -58,12 +58,12 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_git_checkout.yml
 
 - name: "al_git_checkout: Set default values."
-  set_fact:
+  ansible.builtin.set_fact:
     my_default_user: "{{ lookup('env','USER') }}"
     my_default_path: "{{ lookup('env','HOME') ~ '/.ansible/repos' }}"
 
 - name: "al_git_checkout: Default variables."
-  set_fact:
+  ansible.builtin.set_fact:
     al_git_checkout_module: "{{ al_git_checkout_module|default(true) }}"
     al_git_checkout_git_user: "{{ al_git_checkout_git_user|default('admin') }}"
     al_git_checkout_user: "{{ al_git_checkout_user|default(my_default_user) }}"
@@ -74,7 +74,8 @@
     al_debug: "{{ al_debug|default(false) }}"
 
 - name: "al_git_checkout: Include list of repos from {{ al_git_checkout_repos_file }}"
-  include_vars: "{{ al_git_checkout_repos_file }}"
+  ansible.builtin.include_vars:
+    file: "{{ al_git_checkout_repos_file }}"
 
 - name: "al_git_checkout: Debug."
   vars:
@@ -88,12 +89,12 @@
       al_git_checkout_repos_file [{{ al_git_checkout_repos_file }}]
       requirements
       {{ requirements|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
 
 - name: "al_git_checkout: Create directory {{ al_git_checkout_repos_path }}"
-  file:
+  ansible.builtin.file:
     state: directory
     dest: "{{ al_git_checkout_repos_path }}"
     owner: "{{ al_git_checkout_user }}"
@@ -101,7 +102,7 @@
     mode: "{{ al_git_checkout_mode }}"
 
 - name: "al_git_checkout: Git install repos."
-  git:
+  ansible.builtin.git:
     repo: "{{ item.src }}"
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
     version: "{{ item.version|default('HEAD') }}"
@@ -111,14 +112,16 @@
     - al_git_checkout_module|bool
 
 - name: "al_git_checkout: Command install repos."
-  command: "/bin/sh -c 'cd {{ al_git_checkout_repos_path }};
-                        if [ -e {{ item.name|quote }} ]; then
-                           (cd {{ item.name }}; git pull);
-                        else
-                           git clone {{ item.src }} {{ item.name }};
-                        fi'"
-  args:
+  command:
     chdir: "{{ al_git_checkout_repos_path }}"
+    cmd: |
+      /bin/sh -c
+      "cd {{ al_git_checkout_repos_path }};
+      if [ -e {{ item.name|quote }} ]; then
+         (cd {{ item.name }}; git pull);
+      else
+         git clone {{ item.src }} {{ item.name }};
+      fi"
   loop: "{{ requirements }}"
   when:
     - item.install|default(true)
@@ -126,7 +129,7 @@
     - not ansible_check_mode
 
 - name: "al_git_checkout: Chown and chmod repos."
-  file:
+  ansible.builtin.file:
     state: directory
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
     owner: "{{ al_git_checkout_user }}"
@@ -138,7 +141,7 @@
     - not ansible_check_mode
 
 - name: "al_git_checkout: Link repos."
-  file:
+  ansible.builtin.file:
     state: link
     src: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
     dest: "{{ al_git_checkout_repos_path }}/{{ item.link }}"

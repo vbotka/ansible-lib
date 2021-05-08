@@ -24,6 +24,13 @@ a library of reusable tasks which can be included in playbooks and other roles, 
 See the comments in the tasks.
 
 
+## Requirements and dependencies
+
+### Collections
+
+* community.general
+
+
 ## License
 
 [![license](https://img.shields.io/badge/license-BSD-red.svg)](https://www.freebsd.org/doc/en/articles/bsdl-gpl/article.html)

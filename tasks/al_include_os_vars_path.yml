@@ -39,16 +39,17 @@
   vars:
     msg: |-
       al_os_vars_path [{{ al_os_vars_path|default('NOT_DEFINED') }}]
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
 - name: "al_include_os_vars_path: End of play when al_os_vars_path not defined"
   when: al_os_vars_path is not defined
-  fail:
+  ansible.builtin.fail:
     msg: Variable al_os_vars_path not defined. End of play.
 
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
@@ -61,7 +62,8 @@
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"

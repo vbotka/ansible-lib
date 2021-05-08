@@ -3,15 +3,15 @@
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 - name: "al_include_sanity_platform_test_vars: Set al_sanity_platform_test"
-  set_fact:
+  ansible.builtin.set_fact:
     al_sanity_platform_test: "{{ ansible_distribution }}"
 
 - name: "al_include_sanity_platform_test_vars: Set al_sanity_platform_version_test"
-  set_fact:
+  ansible.builtin.set_fact:
     al_sanity_platform_version_test: "{{ ansible_distribution_release }}"
 
 - name: "al_include_sanity_platform_test_vars: Set al_sanity_platform_version_test"
-  set_fact:
+  ansible.builtin.set_fact:
     al_sanity_platform_version_test: "{{ ansible_distribution_version }}"
   when: al_sanity_platform_test == 'FreeBSD'
 

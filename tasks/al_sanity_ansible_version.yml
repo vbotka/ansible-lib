@@ -46,17 +46,17 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_sanity_ansible_version.yml
 
 - name: "al_sanity_ansible_version: Fail when galaxy_info not defined."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] Mandatory variable galaxy_info not defined."
   when: galaxy_info is undefined
 
 - name: "al_sanity_ansible_version: Fail when al_sanity_role_name not defined."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
   when: al_sanity_role_name is undefined
 
 - name: "al_sanity_ansible_version: Get Ansible minimal version."
-  set_fact:
+  ansible.builtin.set_fact:
     al_sanity_ansible_version_min: "{{ galaxy_info.min_ansible_version }}"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,13 +77,13 @@
       al_sanity_ansible_version_warning [{{ al_sanity_ansible_version_warning }}]
 
       galaxy_info.min_ansible_version [{{ galaxy_info.min_ansible_version }}]
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Print ERROR version not supported. Fail."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] {{ ansible_version.full }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -94,7 +94,7 @@
 - name: "al_sanity_ansible_version: Test Ansible version is supported. End host if not."
   block:
     - name: "al_sanity_ansible_version: Print ERROR Ansible version not supported. End host."
-      debug:
+      ansible.builtin.debug:
         msg: "[ERROR] {{ ansible_version.full }} not supported
               by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_ansible_version: Meta end_host."
@@ -105,7 +105,7 @@
 
 # WARNING - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Print WARNING Ansible version not supported."
-  debug:
+  ansible.builtin.debug:
     msg: "[WARNING] {{ ansible_version.full }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -115,7 +115,7 @@
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Debug. Test supported Ansible version passed."
   when: al_debug|bool
-  debug:
+  ansible.builtin.debug:
     msg: "Role {{ al_sanity_role_name }} test supported Ansible version
           {{ ansible_version.full }} passed."
 
