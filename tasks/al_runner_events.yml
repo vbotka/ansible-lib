@@ -40,12 +40,12 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_runner_events.yml
 
 - name: "al_runner_events: Find files"
-  find:
+  ansible.builtin.find:
     paths: "{{ al_runner_events_dir }}"
   register: result
 
 - name: "al_runner_events: Include events from the files"
-  include_vars:
+  ansible.builtin.include_vars:
     file: "{{ item }}"
     name: "{{ 'my_var_' ~ my_idx }}"
   loop: "{{ result.files|json_query('[].path') }}"
@@ -53,7 +53,7 @@
     index_var: my_idx
 
 - name: "al_runner_events: Create list of events"
-  set_fact:
+  ansible.builtin.set_fact:
     al_runner_events_list: "{{ al_runner_events_list|default([]) +
                                [lookup('vars', my_key)] }}"
   loop: "{{ range(0, result.matched)|list }}"
@@ -63,7 +63,7 @@
     my_key: "{{ 'my_var_' ~ my_idx }}"
 
 - name: "al_runner_events: Sort list of events"
-  set_fact:
+  ansible.builtin.set_fact:
     al_runner_events_list: "{{ al_runner_events_list|
                                sort(attribute='counter') }}"
 

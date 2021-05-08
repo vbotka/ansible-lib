@@ -25,4 +25,6 @@ galaxy_info:
     - ubuntu
     - centos
 dependencies: []
+collections:
+  - community.general
 ...

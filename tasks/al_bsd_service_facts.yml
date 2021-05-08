@@ -12,20 +12,20 @@
 #
 #    "ansible_facts.services": {
 #        "ModemManager.service": {
-#            "name": "ModemManager.service", 
-#            "source": "systemd", 
-#            "state": "inactive", 
+#            "name": "ModemManager.service",
+#            "source": "systemd",
+#            "state": "inactive",
 #            "status": "disabled"
-#        }, 
+#        },
 #        "apache2": {
-#            "name": "apache2", 
-#            "source": "sysv", 
+#            "name": "apache2",
+#            "source": "sysv",
 #            "state": "stopped"
-#        }, 
+#        },
 #        "apache2.service": {
-#            "name": "apache2.service", 
-#            "source": "systemd", 
-#            "state": "inactive", 
+#            "name": "apache2.service",
+#            "source": "systemd",
+#            "state": "inactive",
 #            "status": "disabled"
 #        }
 #    }
@@ -57,7 +57,7 @@
 #           tasks_from: al_bsd_service_facts
 #         when: not ansible_check_mode
 #       - name: Display status of services
-#         debug:
+#         ansible.builtin.debug:
 #           var: al_ansible_facts_services|default({})
 #   # EOF
 #
@@ -77,7 +77,7 @@
 #           tasks_from: al_bsd_service_facts
 #         when: not ansible_check_mode
 #       - name: Display status of services
-#         debug:
+#         ansible.builtin.debug:
 #           var: al_ansible_facts_services|default({})
 #   # EOF
 #
@@ -104,39 +104,40 @@
 - name: "al_bsd_service_facts: Create list al_bsd_service_paths"
   block:
     - name: "al_bsd_service_facts: Find all rc scripts"
-      find:
+      ansible.builtin.find:
         paths:
           - /etc/rc.d
           - /usr/local/etc/rc.d
       register: rc_scripts
     - name: "al_bsd_service_facts: Set al_bsd_service_paths"
-      set_fact:
+      ansible.builtin.set_fact:
         al_bsd_service_paths: "{{ rc_scripts.files|map(attribute='path')|list }}"
   when: al_bsd_service_paths|default([])|length == 0
 
 - name: "al_bsd_service_facts: Debug al_bsd_service_paths"
-  debug:
+  ansible.builtin.debug:
     var: al_bsd_service_paths|sort
   when: al_debug| bool
 
 - name: "al_bsd_service_facts: Get onestatus"
-  command: "{{ item }} onestatus"
-  register: service_status
+  command:
+    cmd: "{{ item }} onestatus"
   loop: "{{ al_bsd_service_paths|sort }}"
+  register: service_status
   ignore_errors: true
   changed_when: false
 
 - name: "al_bsd_service_facts: Debug service_status"
-  debug:
+  ansible.builtin.debug:
     msg: "{{ service_status }}"
   when: al_debug| bool
 
 - name: "al_bsd_service_facts: Set empty al_ansible_facts_services"
-  set_fact:
+  ansible.builtin.set_fact:
     al_ansible_facts_services: {}
 
 - name: "al_bsd_service_facts: Select unknown states"
-  set_fact:
+  ansible.builtin.set_fact:
     al_ansible_facts_services: "{{ al_ansible_facts_services|
                                    combine({(item.item|basename): {'state': 'unknown'}}) }}"
   loop: "{{ service_status.results }}"
@@ -147,7 +148,7 @@
     - item.stderr_lines|length > 0
 
 - name: "al_bsd_service_facts: Select stopped states"
-  set_fact:
+  ansible.builtin.set_fact:
     al_ansible_facts_services: "{{ al_ansible_facts_services|
                                    combine({item.item|basename: {'state': 'stopped'}}) }}"
   loop: "{{ service_status.results }}"
@@ -159,7 +160,7 @@
     - item.stdout is search("running")
 
 - name: "al_bsd_service_facts: Select running states"
-  set_fact:
+  ansible.builtin.set_fact:
     al_ansible_facts_services: "{{ al_ansible_facts_services|
                                    combine({item.item|basename: {'state': 'running'}}) }}"
   loop: "{{ service_status.results }}"

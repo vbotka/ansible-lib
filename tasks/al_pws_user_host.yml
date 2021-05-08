@@ -181,7 +181,7 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_pws_user_host.yml
 
 - name: "al_pws_user_host: Default variables."
-  set_fact:
+  ansible.builtin.set_fact:
     al_pws_debug: "{{ al_pws_debug|default(false) }}"
     al_pws_backup: "{{ al_pws_backup|default(false) }}"
     al_pws_create: "{{ al_pws_create|default(false) }}"
@@ -210,20 +210,20 @@
       al_pws_hostname_var [{{ al_pws_hostname_var }}]
       al_pws_query
       {{ al_pws_query|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 # Sanity  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Sanity of al_pws_query. Empty."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] List of queries al_pws_query is empty."
   when: number_of_items|int == 0
   vars:
     number_of_items: "{{ al_pws_query|length }}"
 
 - name: "al_pws_user_host: Sanity of al_pws_query. Attribute name is mandatory."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] Attribute name is mandatory."
   when: number_of_names != number_of_items
   vars:
@@ -232,11 +232,11 @@
 
 # Create queries to passwordstore - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_queries."
-  set_fact:
+  ansible.builtin.set_fact:
     my_queries: {}
 
 - name: "al_pws_user_host: Create passwordstore queries."
-  set_fact:
+  ansible.builtin.set_fact:
     my_queries: "{{ my_queries|combine({item.name: my_query}) }}"
   loop: "{{ al_pws_query }}"
   loop_control:
@@ -266,13 +266,13 @@
       my_queries|length [{{ my_queries|length }}]
       my_queries (JSON)
       {{ my_queries|to_nice_json }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 - name: "al_pws_user_host: Debug my_queries 2."
   when: al_pws_debug|bool
-  debug:
+  ansible.builtin.debug:
     msg: "{{ {item.key: item.value} }}"
   loop: "{{ my_queries|dict2items }}"
   loop_control:
@@ -280,34 +280,34 @@
 
 # Query passwordstore - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_userpass_dict."
-  set_fact:
+  ansible.builtin.set_fact:
     my_userpass_dict: {}
 
 - name: "al_pws_user_host: Retrieve, create or update userpass in passwordstore."
-  set_fact:
+  ansible.builtin.set_fact:
     my_userpass_dict: "{{ my_userpass_dict|combine({item.key: my_userpass}) }}"
   loop: "{{ my_queries|dict2items }}"
   loop_control:
     label: "{{ item.key }}"
   vars:
-    my_userpass: "{{ lookup('passwordstore', item.value) }}"
+    my_userpass: "{{ lookup('community.general.passwordstore', item.value) }}"
 
 - name: "al_pws_user_host: Debug my_userpass_dict."
   vars:
     msg: |-
       my_userpass_dict
       {{ my_userpass_dict|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 # Create salt dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_salt_dict."
-  set_fact:
+  ansible.builtin.set_fact:
     my_salt_dict: {}
 
 - name: "al_pws_user_host: Create dictionary with salt."
-  set_fact:
+  ansible.builtin.set_fact:
     my_salt_dict: "{{ my_salt_dict|combine({item.name: my_salt}) }}"
   loop: "{{ al_pws_query }}"
   loop_control:
@@ -326,17 +326,17 @@
     msg: |-
       my_salt_dict
       {{ my_salt_dict|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 # Hash passwords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empty dictionary my_password_dict."
-  set_fact:
+  ansible.builtin.set_fact:
     my_password_dict: {}
 
 - name: "al_pws_user_host: Hash userpass to password."
-  set_fact:
+  ansible.builtin.set_fact:
     my_password_dict: "{{ my_password_dict|combine({item.key: my_password}) }}"
   loop: "{{ my_userpass_dict|dict2items }}"
   loop_control:
@@ -349,17 +349,17 @@
     msg: |-
       my_password_dict
       {{ my_password_dict|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 
 # Create return dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_pws_user_host: Create empy list al_pws_query_result."
-  set_fact:
+  ansible.builtin.set_fact:
     al_pws_query_result: []
 
 - name: "al_pws_user_host: Add attributes userpass and password."
-  set_fact:
+  ansible.builtin.set_fact:
     al_pws_query_result: "{{ al_pws_query_result +
                              [item|
                              combine({'userpass': my_userpass_dict[item.name]})|
@@ -377,7 +377,7 @@
     msg: |-
       al_pws_query_result
       {{ al_pws_query_result|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_pws_debug|bool
 

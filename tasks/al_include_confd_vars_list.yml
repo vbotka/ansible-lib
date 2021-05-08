@@ -32,31 +32,31 @@
 
 # Debug and Test input variable al_include_confd_dir - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Debug"
-  when: al_debug|bool
   vars:
     msg: |-
       al_include_confd_dir [ {{ al_include_confd_dir|default('NOT_DEFINED') }} ]
       al_include_confd_vars_list_type [ {{ al_include_confd_vars_list_type }} ]
       al_include_confd_patterns [ {{ al_include_confd_patterns }} ]
       al_include_confd_excludes [ {{ al_include_confd_excludes }} ]
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
+  when: al_debug|bool
 - name: "al_include_confd_vars_list: End of play"
-  when: al_include_confd_dir is not defined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable al_include_confd_dir is not defined. End of play."
+  when: al_include_confd_dir is not defined
 - name: "al_include_confd_vars_list: End of play"
-  when: al_include_confd_dir is not exists
-  fail:
+  ansible.builtin.fail:
     msg: "Path {{ al_include_confd_dir }} does not exist. End of play."
+  when: al_include_confd_dir is not exists
 - name: "al_include_confd_vars_list: End of play"
-  when: al_include_confd_vars_list_type not in al_include_confd_vars_list_options
-  fail:
+  ansible.builtin.fail:
     msg: "Unknown type of al_include_confd_vars_list_type. End of play."
+  when: al_include_confd_vars_list_type not in al_include_confd_vars_list_options
 
 # List of configuration files - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Find configuration files"
-  find:
+  ansible.builtin.find:
     file_type: file
     paths: "{{ al_include_confd_dir }}"
     patterns: "{{ al_include_confd_patterns }}"
@@ -64,49 +64,51 @@
   delegate_to: localhost
   register: result
 - name: "al_include_confd_vars_list: Create list of configuration files"
-  set_fact:
+  ansible.builtin.set_fact:
     al_local_path_list: "{{ result|json_query('files[].path') }}"
 - name: "al_include_confd_vars_list: Debug list of configuration files"
-  when: al_debug|bool
-  debug:
+  ansible.builtin.debug:
     var: al_local_path_list
+  when: al_debug|bool
 
 # List of configuration links - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_confd_vars_list: Find configuration links"
-  find:
+  ansible.builtin.find:
     file_type: link
     paths: "{{ al_include_confd_dir }}"
     patterns: "{{ al_include_confd_patterns }}"
   delegate_to: localhost
   register: result
 - name: "al_include_confd_vars_list: Add list of configuration links"
-  set_fact:
+  ansible.builtin.set_fact:
     al_local_path_list: "{{ al_local_path_list + result|json_query('files[].path') }}"
 - name: "al_include_confd_vars_list: Debug list of configuration paths"
-  when: al_debug|bool
-  debug:
+  ansible.builtin.debug:
     var: al_local_path_list
+  when: al_debug|bool
 
 # Include vars from configuration paths and - - - - - - - - - - - - - - - - - - - - - - - -
 # Create output variable al_include_confd_vars_list
 - name: "al_include_confd_vars_list: Create empty al_include_confd_vars_list"
-  set_fact:
+  ansible.builtin.set_fact:
     al_include_confd_vars_list: []
 # Create plain list of variables
 - name: "al_include_confd_vars_list: Create plain list of vars"
-  when: al_include_confd_vars_list_type == "plain"
-  include_tasks: fn/al_include_confd_vars_list_plain.yml
+  ansible.builtin.include_tasks:
+    file: fn/al_include_confd_vars_list_plain.yml
   loop: "{{ al_local_path_list }}"
+  when: al_include_confd_vars_list_type == "plain"
 # Create list of dictionaries with fname
 - name: "al_include_confd_vars_list: Create list of vars incl. fname"
-  when: al_include_confd_vars_list_type == "fname"
-  include_tasks: fn/al_include_confd_vars_list_fname.yml
+  ansible.builtin.include_tasks:
+    file: fn/al_include_confd_vars_list_fname.yml
   loop: "{{ al_local_path_list }}"
+  when: al_include_confd_vars_list_type == "fname"
 # Debug
 - name: "al_include_confd_vars_list: Debug al_include_confd_vars_list"
-  when: al_debug|bool
-  debug:
+  ansible.builtin.debug:
     var: al_include_confd_vars_list
+  when: al_debug|bool
 
 # EOF
 ...

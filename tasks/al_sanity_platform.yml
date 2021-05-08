@@ -57,34 +57,35 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_sanity_platform.yml
 
 - name: "al_sanity_platform: Fail when galaxy_info not defined."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] Mandatory variable galaxy_info not defined."
   when: galaxy_info is undefined
 
 - name: "al_sanity_platform: Fail when al_sanity_role_name not defined."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
   when: al_sanity_role_name is undefined
 
 - name: "al_sanity_platform: Setup. Collect minimal subset."
-  setup:
+  ansible.builtin.setup:
     gather_subset:
       - '!all'
   when: al_sanity_platform_gather_subset|bool
 
 - name: "al_sanity_platform: Get supported platforms."
-  set_fact:
+  ansible.builtin.set_fact:
     al_supported_platforms: "{{ galaxy_info.platforms|json_query(query) }}"
   vars:
     query: "[].name"
 - name: "al_sanity_platform: Get supported versions of {{ ansible_distribution }}."
-  set_fact:
+  ansible.builtin.set_fact:
     al_supported_versions: "{{ galaxy_info.platforms|json_query(query)|
                                flatten|map('quote')|list }}"
   vars:
     query: "[?name == '{{ ansible_distribution }}'].versions"
 - name: "al_sanity_platform: Set test variables."
-  include_tasks: "fn/al_include_sanity_platform_test_vars.yml"
+  ansible.builtin.include_tasks:
+    file: "fn/al_include_sanity_platform_test_vars.yml"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_platform: Debug. Print variables."
@@ -113,7 +114,7 @@
 
       galaxy_info.platforms
       {{ galaxy_info.platforms|to_nice_yaml }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
 
@@ -121,7 +122,7 @@
 
 # ERROR. Fail.
 - name: "al_sanity_platform: Print ERROR platform not supported. Fail."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] {{ al_sanity_platform_test }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -131,7 +132,7 @@
 - name: "al_sanity_platform: Test platform is supported. End host if not."
   block:
     - name: "al_sanity_platform: Print ERROR platform not supported. End host."
-      debug:
+      ansible.builtin.debug:
         msg: "[ERROR] {{ al_sanity_platform_test }} not supported
               by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
@@ -141,7 +142,7 @@
     - al_sanity_platform_end_host|bool
 # WARNING
 - name: "al_sanity_platform: Print WARNING platform not supported."
-  debug:
+  ansible.builtin.debug:
     msg: "[WARNING] {{ al_sanity_platform_test }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -152,7 +153,7 @@
 
 # ERROR. Fail.
 - name: "al_sanity_platform: Print ERROR version not supported. Fail."
-  fail:
+  ansible.builtin.fail:
     msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -163,7 +164,7 @@
 - name: "al_sanity_platform: Test version is supported. End host if not."
   block:
     - name: "al_sanity_platform: Print ERROR version not supported. End host."
-      debug:
+      ansible.builtin.debug:
         msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported
               by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
@@ -173,7 +174,7 @@
     - al_sanity_platform_version_end_host|bool
 # WARNING
 - name: "al_sanity_platform: Print WARNING version not supported."
-  debug:
+  ansible.builtin.debug:
     msg: "[WARNING] version {{ al_sanity_platform_version_test }} not supported
           by role {{ al_sanity_role_name }}."
   when:
@@ -183,7 +184,7 @@
 # Debug
 - name: "al_sanity_platform: Debug. Test supported platform and version passed."
   when: al_debug|bool
-  debug:
+  ansible.builtin.debug:
     msg: "Role {{ al_sanity_role_name }} test supported platform
           {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }}
           passed."

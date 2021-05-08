@@ -49,7 +49,7 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_mdconfig.yml
 
 - name: "al_mdconfig: Default variables."
-  set_fact:
+  ansible.builtin.set_fact:
     al_mdconfig_state: "{{ al_mdconfig_state|default('present') }}"
     al_debug: "{{ al_debug|default(false) }}"
 
@@ -58,29 +58,30 @@
     msg: |-
       al_mdconfig_file [{{ al_mdconfig_file }}]
       al_mdconfig_state [{{ al_mdconfig_state }}]
-  debug:
+  ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
 
 # Create dictionary al_mdconfig_devs - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_mdconfig: List memory disks"
-  command: mdconfig -lv
+  command:
+    cmd: mdconfig -lv
   register: result
   changed_when: false
 
 - name: "al_mdconfig: Debug memory disks"
-  debug:
+  ansible.builtin.debug:
     msg: "{{ result.stdout_lines }}"
   when:
     - al_debug|bool
     - result.stdout_lines is defined
 
 - name: "al_mdconfig: Create empty memory disks dictionary"
-  set_fact:
+  ansible.builtin.set_fact:
     al_mdconfig_devs: {}
 
 - name: "al_mdconfig: Parse memory disks"
-  set_fact:
+  ansible.builtin.set_fact:
     al_mdconfig_devs: "{{ al_mdconfig_devs|
                           combine({array.3: {'node': array.1,
                                              'size': array.2,
@@ -93,24 +94,25 @@
     unit: "{{ array[0][2:] }}"
 
 - name: "al_mdconfig: Debug memory disks"
-  debug:
+  ansible.builtin.debug:
     var: al_mdconfig_devs
   when: al_debug|bool
 
 # Attach memory disk - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - block:
     - name: "al_mdconfig: Attach memory disk"
-      command: "mdconfig -a -t vnode -f {{ al_mdconfig_file }}"
+      command:
+        cmd: "mdconfig -a -t vnode -f {{ al_mdconfig_file }}"
       register: result
     - name: "al_mdconfig: Add memory disk to dictionary"
-      set_fact:
+      ansible.builtin.set_fact:
         al_mdconfig_devs: "{{ al_mdconfig_devs|
                               combine({al_mdconfig_file: {'node': 'vnode',
                                                           'unit': result.stdout[2:]}}) }}"
       when: result.stdout|default('')|length > 0
   rescue:
     - name: "al_mdconfig: Rescue failed attached memory disk"
-      fail:
+      ansible.builtin.fail:
         msg: "[ERROR] Can't attach memory disk {{ al_mdconfig_file }}\n{{ result }}"
   when:
     - al_mdconfig_state == "present"
@@ -124,11 +126,11 @@
         removes: "/dev/md{{ al_mdconfig_devs[al_mdconfig_file]['unit'] }}"
       register: result
     - name: "al_mdconfig: Remove memory disk from dictionary"
-      set_fact:
+      ansible.builtin.set_fact:
         al_mdconfig_devs: "{% set rm=al_mdconfig_devs.pop(al_mdconfig_file) %}{{ al_mdconfig_devs }}"
   rescue:
     - name: "al_mdconfig: Rescue failed detached memory disk"
-      fail:
+      ansible.builtin.fail:
         msg: "[ERROR] Can't detach memory disk {{ al_mdconfig_file }}\n{{ result }}"
   when:
     - al_mdconfig_state == "absent"
