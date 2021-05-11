@@ -26,5 +26,6 @@ galaxy_info:
     - centos
 dependencies: []
 collections:
+  - ansible.builtin
   - community.general
 ...

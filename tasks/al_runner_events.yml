@@ -55,7 +55,7 @@
 - name: "al_runner_events: Create list of events"
   ansible.builtin.set_fact:
     al_runner_events_list: "{{ al_runner_events_list|default([]) +
-                               [lookup('vars', my_key)] }}"
+                               [lookup('ansible.builtin.vars', my_key)] }}"
   loop: "{{ range(0, result.matched)|list }}"
   loop_control:
     index_var: my_idx
