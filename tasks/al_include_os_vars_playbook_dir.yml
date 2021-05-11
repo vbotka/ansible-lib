@@ -22,29 +22,35 @@
 
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"
-  include_vars:
-    file: "{{ item }}"
-  with_first_found:
-    - files:
+  include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    params:
+      files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
-        - "default.yml"
-        - "defaults.yml"
+        - default.yml
+        - defaults.yml
       paths: "{{ playbook_dir }}/vars/defaults"
+      skip: true
+  when: _file|length > 0
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
-  include_vars:
-    file: "{{ item }}"
-  with_first_found:
-    - files:
+  include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    params:
+      files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
-        - "default.yml"
-        - "defaults.yml"
+        - default.yml
+        - defaults.yml
       paths: "{{ playbook_dir }}/vars"
+      skip: true
+  when: _file|length > 0
 
 # EOF
 ...
