@@ -28,7 +28,7 @@
 #      least empty).
 #   2) Variables in vars/defaults/* will be overwritten by the file from
 #      "with_first_found" in vars.
-#   3) Variables in vars/main.yml will be ovewritten by the file from
+#   3) Variables in vars/main.yml will be overwritten by the file from
 #      the list "with_first_found".
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_path.yml
@@ -46,12 +46,13 @@
     msg: Variable al_os_vars_path not defined. End of play.
   when: al_os_vars_path is not defined
 
-# Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Default variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
-  include_vars:
-    file: "{{ item }}"
-  with_first_found:
-    - files:
+  include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    params:
+      files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
@@ -59,13 +60,15 @@
         - defaults.yml
       paths: "{{ al_os_vars_path }}/vars/defaults"
       skip: true
+  when: _file|length > 0
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
-  include_vars:
-    file: "{{ item }}"
-  with_first_found:
-    - files:
+  include_vars: "{{ _file }}"
+  vars:
+    _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    params:
+      files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
@@ -73,6 +76,7 @@
         - defaults.yml
       paths: "{{ al_os_vars_path }}/vars"
       skip: true
+  when: _file|length > 0
 
 # EOF
 ...
