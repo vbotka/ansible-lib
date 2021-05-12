@@ -79,7 +79,7 @@
 
 - name: "al_find_newer: Read timestamp (default: 0)"
   ansible.builtin.set_fact:
-    my_timestamp: "{{ lookup('pipe', 'sh -c ' ~ my_command) }}"
+    my_timestamp: "{{ lookup('ansible.builtin.pipe', 'sh -c ' ~ my_command) }}"
   vars:
     my_command: >-
       '[ -e {{ al_find_newer_timestamp }} ] &&

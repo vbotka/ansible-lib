@@ -1,0 +1,62 @@
+---
+# All rights reserved (c) 2021, Vladimir Botka <vbotka@gmail.com>
+# Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ansible_lib: al_include_os_vars_playbook_dir_incr
+#
+# Description: Include OS specific variables from playbook_dir incrementally
+#
+# Input: none
+#
+# Output: none
+#
+# Example:
+#
+#   tasks:
+#     - include_role:
+#         name: vbotka.ansible_lib
+#         tasks_from: al_include_os_vars_playbook_dir_incr.yml
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_playbook_dir_incr.yml
+
+# Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars/defaults"
+  include_vars: "{{ item }}"
+  register: result
+  loop:
+    - "{{ my_path }}/defaults.yml"
+    - "{{ my_path }}/default.yml"
+    - "{{ my_path }}/{{ ansible_os_family }}.yml"
+    - "{{ my_path }}/{{ ansible_distribution }}.yml"
+    - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+  when: item is exists
+  vars:
+    my_path: "{{ playbook_dir }}/vars/defaults"
+
+- name: "al_include_os_vars_playbook_dir_incr: Debug include default vars"
+  ansible.builtin.debug:
+    var: result
+  when: al_debug|bool
+
+# Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars"
+  include_vars: "{{ item }}"
+  register: result
+  loop:
+    - "{{ my_path }}/defaults.yml"
+    - "{{ my_path }}/default.yml"
+    - "{{ my_path }}/{{ ansible_os_family }}.yml"
+    - "{{ my_path }}/{{ ansible_distribution }}.yml"
+    - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+  when: item is exists
+  vars:
+    my_path: "{{ playbook_dir }}/vars"
+
+- name: "al_include_os_vars_playbook_dir_incr: Debug include custom vars"
+  ansible.builtin.debug:
+    var: result
+  when: al_debug|bool
+
+# EOF
+...

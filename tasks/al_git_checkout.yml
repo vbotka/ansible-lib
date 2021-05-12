@@ -38,7 +38,7 @@
 #           name: vbotka.ansible_lib
 #           tasks_from: al_git_checkout
 #         vars:
-#           al_git_checkout_repos_path: "{{ lookup('env','HOME') ~ '/.ansible/roles' }}"
+#           al_git_checkout_repos_path: "{{ lookup('ansible.builtin.env','HOME') ~ '/.ansible/roles' }}"
 #   ...
 #
 #   shell> cat vars/requirements-roles.yml
@@ -59,8 +59,8 @@
 
 - name: "al_git_checkout: Set default values."
   ansible.builtin.set_fact:
-    my_default_user: "{{ lookup('env','USER') }}"
-    my_default_path: "{{ lookup('env','HOME') ~ '/.ansible/repos' }}"
+    my_default_user: "{{ lookup('ansible.builtin.env','USER') }}"
+    my_default_path: "{{ lookup('ansible.builtin.env','HOME') ~ '/.ansible/repos' }}"
 
 - name: "al_git_checkout: Default variables."
   ansible.builtin.set_fact:
