@@ -84,7 +84,7 @@
   vars:
     query: "[?name == '{{ ansible_distribution }}'].versions"
 - name: "al_sanity_platform: Set test variables."
-  ansible.builtin.include_tasks:
+  include_tasks:
     file: "fn/al_include_sanity_platform_test_vars.yml"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
