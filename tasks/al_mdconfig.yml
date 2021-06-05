@@ -64,7 +64,7 @@
 
 # Create dictionary al_mdconfig_devs - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_mdconfig: List memory disks"
-  command:
+  ansible.builtin.command:
     cmd: mdconfig -lv
   register: result
   changed_when: false
@@ -85,12 +85,12 @@
     al_mdconfig_devs: "{{ al_mdconfig_devs|
                           combine({array.3: {'node': array.1,
                                              'size': array.2,
-                                             'unit': unit}}) }}"
+                                             'unit': unit }}) }}"
   loop: "{{ result.stdout_lines|default([]) }}"
   loop_control:
     loop_var: al_item
   vars:
-    array: "{{ al_item.split('\t')|map('trim')|list }}"
+    array: "{{ al_item.split('\t')|map('trim')|list }}"  # noqa no-tabs
     unit: "{{ array[0][2:] }}"
 
 - name: "al_mdconfig: Debug memory disks"
@@ -101,14 +101,14 @@
 # Attach memory disk - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - block:
     - name: "al_mdconfig: Attach memory disk"
-      command:
+      ansible.builtin.command:
         cmd: "mdconfig -a -t vnode -f {{ al_mdconfig_file }}"
       register: result
     - name: "al_mdconfig: Add memory disk to dictionary"
       ansible.builtin.set_fact:
         al_mdconfig_devs: "{{ al_mdconfig_devs|
                               combine({al_mdconfig_file: {'node': 'vnode',
-                                                          'unit': result.stdout[2:]}}) }}"
+                                                          'unit': result.stdout[2:] }}) }}"
       when: result.stdout|default('')|length > 0
   rescue:
     - name: "al_mdconfig: Rescue failed attached memory disk"
@@ -121,7 +121,7 @@
 # Detach memory disk - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - block:
     - name: "al_mdconfig: Detach memory disk"
-      command:
+      ansible.builtin.command:
         cmd: "mdconfig -d -u {{ al_mdconfig_devs[al_mdconfig_file]['unit'] }}"
         removes: "/dev/md{{ al_mdconfig_devs[al_mdconfig_file]['unit'] }}"
       register: result

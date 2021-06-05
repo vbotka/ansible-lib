@@ -7,9 +7,9 @@
     file: "{{ item }}"
     name: al_local_var
 - name: "al_include_confd_vars_list_plain: Debug"
-  when: al_debug|bool
   ansible.builtin.debug:
     var: al_local_var
+  when: al_debug|bool
 - name: "al_include_confd_vars_list_plain: Add vars to list"
   ansible.builtin.set_fact:
     al_include_confd_vars_list: "{{ al_include_confd_vars_list +

@@ -11,8 +11,8 @@ Feel free to [share your feedback and report issues](https://github.com/vbotka/a
 
 ## Description
 
-Do not run this role. It's a collection of independent tasks. The purpose of this role is providing
-a library of reusable tasks which can be included in playbooks and other roles, e.g.
+This role is a collection of independent tasks. The purpose is providing a library of reusable tasks
+which can be included in playbooks and other roles, e.g.
 
 ```
        - name: Create groups of reachable and unreachable hosts.

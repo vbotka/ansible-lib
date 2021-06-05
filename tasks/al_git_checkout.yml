@@ -112,7 +112,7 @@
     - al_git_checkout_module|bool
 
 - name: "al_git_checkout: Command install repos."
-  command:
+  ansible.builtin.command:
     chdir: "{{ al_git_checkout_repos_path }}"
     cmd: |
       /bin/sh -c
