@@ -120,7 +120,7 @@
   when: al_debug| bool
 
 - name: "al_bsd_service_facts: Get onestatus"
-  command:
+  ansible.builtin.command:
     cmd: "{{ item }} onestatus"
   loop: "{{ al_bsd_service_paths|sort }}"
   register: service_status

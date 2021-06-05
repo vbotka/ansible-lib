@@ -22,7 +22,7 @@
 
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars/defaults"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   register: result
   loop:
     - "{{ my_path }}/defaults.yml"
@@ -41,7 +41,7 @@
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   register: result
   loop:
     - "{{ my_path }}/defaults.yml"

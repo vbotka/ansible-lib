@@ -84,7 +84,7 @@
   vars:
     query: "[?name == '{{ ansible_distribution }}'].versions"
 - name: "al_sanity_platform: Set test variables."
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: "fn/al_include_sanity_platform_test_vars.yml"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -136,7 +136,7 @@
         msg: "[ERROR] {{ al_sanity_platform_test }} not supported
               by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
-      meta: end_host
+      ansible.builtin.meta: end_host
   when:
     - al_sanity_platform_test not in al_supported_platforms
     - al_sanity_platform_end_host|bool
@@ -168,7 +168,7 @@
         msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported
               by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
-      meta: end_host
+      ansible.builtin.meta: end_host
   when:
     - al_sanity_platform_version_test not in al_supported_versions
     - al_sanity_platform_version_end_host|bool
@@ -183,11 +183,11 @@
 
 # Debug
 - name: "al_sanity_platform: Debug. Test supported platform and version passed."
-  when: al_debug|bool
   ansible.builtin.debug:
     msg: "Role {{ al_sanity_role_name }} test supported platform
           {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }}
           passed."
+  when: al_debug|bool
 
 # EOF
 ...

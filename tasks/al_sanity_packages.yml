@@ -115,13 +115,13 @@
   loop: "{{ al_sanity_packages_required[ansible_distribution]['default'] }}"
   when: item|intersect(my_installed_packages)|length == 0
 - name: "al_sanity_packages: Debug. Display my_installed_packages."
-  when: al_debug|bool
   ansible.builtin.debug:
     msg: "Installed packages: {{ my_installed_packages }}"
-- name: "al_sanity_packages: Debug. Display my_not_installed_packages."
   when: al_debug|bool
+- name: "al_sanity_packages: Debug. Display my_not_installed_packages."
   ansible.builtin.debug:
     msg: "Not installed packages: {{ my_not_installed_packages|default([]) }}"
+  when: al_debug|bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Display ERROR required packages not installed. Fail."
@@ -132,9 +132,9 @@
 
 # Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Debug. Test required packages passed."
-  when: al_debug|bool
   ansible.builtin.debug:
     msg: "Role {{ al_sanity_role_name }} test required packages passed."
+  when: al_debug|bool
 
 # EOF
 ...

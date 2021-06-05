@@ -48,7 +48,7 @@
 
 # Default variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars/defaults"
-  include_vars: "{{ _file }}"
+  ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
     params:
@@ -64,7 +64,7 @@
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
-  include_vars: "{{ _file }}"
+  ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
     params:

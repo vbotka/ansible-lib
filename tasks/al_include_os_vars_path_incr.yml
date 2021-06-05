@@ -44,7 +44,7 @@
 
 # Default variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path_incr: Vars from {{ al_os_vars_path }}/vars/defaults"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   register: result
   loop:
     - "{{ my_path }}/defaults.yml"
@@ -63,7 +63,7 @@
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path_incr: Vars from {{ al_os_vars_path }}/vars"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   register: result
   loop:
     - "{{ my_path }}/defaults.yml"

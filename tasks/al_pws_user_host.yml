@@ -194,6 +194,7 @@
     al_pws_idempotent_password_hash: "{{ al_pws_idempotent_password_hash|default(true) }}"
     al_pws_hostname_var: "{{ al_pws_hostname_var|default('inventory_hostname') }}"
     al_pws_query: "{{ al_pws_query|default([]) }}"
+  no_log: true  # no-log-password password should not be logged.
 
 - name: "al_pws_user_host: Debug."
   vars:
@@ -334,6 +335,7 @@
 - name: "al_pws_user_host: Create empty dictionary my_password_dict."
   ansible.builtin.set_fact:
     my_password_dict: {}
+  no_log: true  # no-log-password password should not be logged.
 
 - name: "al_pws_user_host: Hash userpass to password."
   ansible.builtin.set_fact:
@@ -343,6 +345,7 @@
     label: "{{ item.key }}"
   vars:
     my_password: "{{ item.value|password_hash('sha512', my_salt_dict[item.key]) }}"
+  no_log: true  # no-log-password password should not be logged.
 
 - name: "al_pws_user_host: Debug my_password_dict."
   vars:
