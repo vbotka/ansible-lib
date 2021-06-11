@@ -34,13 +34,13 @@
         - defaults.yml
       paths: "{{ playbook_dir }}/vars/defaults"
       skip: true
-  register: result
+# register: result
   when: _file|length > 0
 
-- name: "al_include_os_vars_playbook_dir: Debug result"
-  ansible.builtin.debug:
-    var: result
-  when: al_debug|bool
+# - name: "al_include_os_vars_playbook_dir: Debug result"
+#   ansible.builtin.debug:
+#     var: result
+#   when: al_debug|bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
@@ -56,13 +56,13 @@
         - defaults.yml
       paths: "{{ playbook_dir }}/vars"
       skip: true
-  register: result
+# register: result
   when: _file|length > 0
 
-- name: "al_include_os_vars_playbook_dir: Debug result"
-  ansible.builtin.debug:
-    var: result
-  when: al_debug|bool
+# - name: "al_include_os_vars_playbook_dir: Debug result"
+#   ansible.builtin.debug:
+#     var: result
+#   when: al_debug|bool
 
 # EOF
 ...

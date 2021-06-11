@@ -45,7 +45,7 @@
 # Default variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path_incr: Vars from {{ al_os_vars_path }}/vars/defaults"
   ansible.builtin.include_vars: "{{ item }}"
-  register: result
+# register: result
   loop:
     - "{{ my_path }}/defaults.yml"
     - "{{ my_path }}/default.yml"
@@ -56,15 +56,15 @@
   vars:
     my_path: "{{ al_os_vars_path }}/vars/defaults"
 
-- name: "al_include_os_vars_path_incr: Debug include default vars"
-  ansible.builtin.debug:
-    var: result
-  when: al_debug|bool
+# - name: "al_include_os_vars_path_incr: Debug include default vars"
+#   ansible.builtin.debug:
+#     var: result
+#   when: al_debug|bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path_incr: Vars from {{ al_os_vars_path }}/vars"
   ansible.builtin.include_vars: "{{ item }}"
-  register: result
+# register: result
   loop:
     - "{{ my_path }}/defaults.yml"
     - "{{ my_path }}/default.yml"
@@ -75,10 +75,10 @@
   vars:
     my_path: "{{ al_os_vars_path }}/vars"
 
-- name: "al_include_os_vars_path_incr: Debug include custom vars"
-  ansible.builtin.debug:
-    var: result
-  when: al_debug|bool
+# - name: "al_include_os_vars_path_incr: Debug include custom vars"
+#   ansible.builtin.debug:
+#     var: result
+#   when: al_debug|bool
 
 # EOF
 ...
