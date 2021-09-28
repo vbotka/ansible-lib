@@ -70,9 +70,9 @@
     al_bsd_ports_list_tmp: "{{ al_bsd_ports_list_tmp + [_item] }}"
   loop: "{{ al_bsd_ports_list|product(al_bsd_ports_flavors)|list }}"
   vars:
-    _flavor_prefix: "{{ item.1|regex_replace('^([a-zA-Z_]*)([0-9]*)$', '\\1') }}"
-    _regex: "{{ _flavor_prefix ~ '-' }}"
-    _replace: "{{ item.1 ~ '-' }}"
+    _flavor_prefix: "{{ item.1|regex_replace('^([a-zA-Z_]*)([0-9]*)$', '\\1-') }}"
+    _regex: '(.*)/({{ _flavor_prefix }})?(.*)'
+    _replace: '{{ item.1 }}-\3'
     _item: "{{ item.0|regex_replace(_regex, _replace) }}"
 
 - name: "al_bsd_ports_set_flavor: Set result"
