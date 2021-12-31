@@ -90,7 +90,7 @@
       requirements
       {{ requirements|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
 - name: "al_git_checkout: Create directory {{ al_git_checkout_repos_path }}"

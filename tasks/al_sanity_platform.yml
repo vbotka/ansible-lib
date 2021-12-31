@@ -115,7 +115,7 @@
       galaxy_info.platforms
       {{ galaxy_info.platforms|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
 # Test platform - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

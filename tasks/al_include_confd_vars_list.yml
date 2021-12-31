@@ -39,7 +39,7 @@
       al_include_confd_patterns [{{ al_include_confd_patterns }}]
       al_include_confd_excludes [{{ al_include_confd_excludes }}]
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 - name: "al_include_confd_vars_list: End of play"
   ansible.builtin.fail:

@@ -52,7 +52,7 @@
 
 - name: "al_bsd_ports_set_flavor: Debug variables"
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
       al_bsd_ports_list
@@ -81,7 +81,7 @@
 
 - name: "al_bsd_ports_set_flavor: Debug result"
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
       al_bsd_ports_list

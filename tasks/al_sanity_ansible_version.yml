@@ -81,7 +81,7 @@
       galaxy_info.min_ansible_version [{{ galaxy_info.min_ansible_version }}]
       al_sanity_ansible_version_min [{{ al_sanity_ansible_version_min }}]
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

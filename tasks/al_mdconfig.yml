@@ -59,7 +59,7 @@
       al_mdconfig_file [{{ al_mdconfig_file }}]
       al_mdconfig_state [{{ al_mdconfig_state }}]
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
 # Create dictionary al_mdconfig_devs - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -52,7 +52,7 @@
       al_hosts_unreachable_group [{{ al_hosts_unreachable_group }}]
       al_hosts_connection_timeout [{{ al_hosts_connection_timeout }}]
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
 - name: "al_hosts_reachable: Wait for connection and set variable."
@@ -102,7 +102,7 @@
       Group: {{ al_hosts_reachable_group }}
       {{ groups[al_hosts_reachable_group]|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when:
     - al_debug|bool
     - groups[al_hosts_reachable_group] is defined
@@ -114,7 +114,7 @@
       Group: {{ al_hosts_unreachable_group }}
       {{ groups[al_hosts_unreachable_group]|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when:
     - al_debug|bool
     - groups[al_hosts_unreachable_group] is defined
