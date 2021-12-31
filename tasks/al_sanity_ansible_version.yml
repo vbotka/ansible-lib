@@ -20,6 +20,7 @@
 #   al_sanity_ansible_version_end_host .. End host when version not supported
 #   al_sanity_ansible_version_warning ... Print warning when version not
 #                                         supported. Continue play.
+#   al_sanity_ansible_version_override .. Override meta ansible minimal version.
 #
 # Output: None
 #
@@ -57,7 +58,7 @@
 
 - name: "al_sanity_ansible_version: Get Ansible minimal version."
   ansible.builtin.set_fact:
-    al_sanity_ansible_version_min: "{{ galaxy_info.min_ansible_version }}"
+    al_sanity_ansible_version_min: "{{ al_sanity_ansible_version_override|d(galaxy_info.min_ansible_version) }}"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Debug. Print variables."
@@ -76,7 +77,9 @@
       al_sanity_ansible_version_end_host [{{ al_sanity_ansible_version_end_host }}]
       al_sanity_ansible_version_warning [{{ al_sanity_ansible_version_warning }}]
 
+      al_sanity_ansible_version_override [{{ al_sanity_ansible_version_override|d('UNDEFINED') }}]
       galaxy_info.min_ansible_version [{{ galaxy_info.min_ansible_version }}]
+      al_sanity_ansible_version_min [{{ al_sanity_ansible_version_min }}]
   ansible.builtin.debug:
     msg: "{{ msg.split('\n') }}"
   when: al_debug|bool
