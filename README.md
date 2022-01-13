@@ -1,6 +1,6 @@
 # ansible_lib
 
-[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)[![Build Status](https://travis-ci.org/vbotka/ansible-lib.svg?branch=master)](https://travis-ci.org/vbotka/ansible-lib)
+[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)[![Build Status](https://app.travis-ci.com/vbotka/ansible-lib.svg?branch=master)](https://app.travis-ci.com/vbotka/ansible-lib)
 
 [Ansible role.](https://galaxy.ansible.com/vbotka/ansible_lib/) Library of Ansible tasks.
 
@@ -38,4 +38,4 @@ See the comments in the tasks.
 
 ## Author Information
 
-[Vladimir Botka](https://botka.link)
+[Vladimir Botka](https://botka.info)
