@@ -212,7 +212,7 @@
       al_pws_query
       {{ al_pws_query|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 # Sanity  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -268,7 +268,7 @@
       my_queries (JSON)
       {{ my_queries|to_nice_json }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 - name: "al_pws_user_host: Debug my_queries 2."
@@ -299,7 +299,7 @@
       my_userpass_dict
       {{ my_userpass_dict|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 # Create salt dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -328,7 +328,7 @@
       my_salt_dict
       {{ my_salt_dict|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 # Hash passwords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -353,7 +353,7 @@
       my_password_dict
       {{ my_password_dict|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 # Create return dictionary - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -381,7 +381,7 @@
       al_pws_query_result
       {{ al_pws_query_result|to_nice_yaml }}
   ansible.builtin.debug:
-    msg: "{{ msg.split('\n') }}"
+    msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
 
 # EOF
