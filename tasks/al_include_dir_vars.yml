@@ -135,9 +135,7 @@
                                     [{'var': item.0.key,
                                       'key': item.1,
                                       'value': value}] }}"
-  with_subelements:
-    - "{{ al_include_dir_vars_keys|dict2items }}"
-    - value
+  loop: "{{ al_include_dir_vars_keys|dict2items|subelements('value') }}"
   vars:
     path: "{{ al_include_dir_vars_dir }}/{{ item.0.key }}/{{ item.1 }}"
     value: "{{ lookup('file', path)|from_yaml }}"

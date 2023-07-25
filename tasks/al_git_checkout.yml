@@ -80,15 +80,15 @@
 - name: "al_git_checkout: Debug."
   vars:
     msg: |-
-      al_git_checkout_module [{{ al_git_checkout_module }}]
-      al_git_checkout_git_user [{{ al_git_checkout_git_user }}]
-      al_git_checkout_user [{{ al_git_checkout_user }}]
-      al_git_checkout_group [{{ al_git_checkout_group }}]
-      al_git_checkout_mode [{{ al_git_checkout_mode }}]
-      al_git_checkout_repos_path [{{ al_git_checkout_repos_path }}]
-      al_git_checkout_repos_file [{{ al_git_checkout_repos_file }}]
-      requirements
-      {{ requirements|to_nice_yaml }}
+      al_git_checkout_module: {{ al_git_checkout_module }}
+      al_git_checkout_git_user: {{ al_git_checkout_git_user }}
+      al_git_checkout_user: {{ al_git_checkout_user }}
+      al_git_checkout_group: {{ al_git_checkout_group }}
+      al_git_checkout_mode: {{ al_git_checkout_mode }}
+      al_git_checkout_repos_path: {{ al_git_checkout_repos_path }}
+      al_git_checkout_repos_file: {{ al_git_checkout_repos_file }}
+      requirements:
+        {{ requirements|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool

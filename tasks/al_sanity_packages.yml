@@ -87,17 +87,17 @@
 - name: "al_sanity_packages: Debug. Print variables."
   vars:
     msg: |-
-      ansible_distribution [{{ ansible_distribution }}]
-      ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
-      ansible_distribution_version [{{ ansible_distribution_version }}]
-      ansible_distribution_release [{{ ansible_distribution_release }}]
-      ansible_python_version [{{ ansible_python_version }}]
+      ansible_distribution: {{ ansible_distribution }}
+      ansible_distribution_major_version: {{ ansible_distribution_major_version }}
+      ansible_distribution_version: {{ ansible_distribution_version }}
+      ansible_distribution_release: {{ ansible_distribution_release }}
+      ansible_python_version: {{ ansible_python_version }}
 
-      al_sanity_role_name [{{ al_sanity_role_name }}]
-      al_sanity_packages_gather_subset [{{ al_sanity_packages_gather_subset }}]
+      al_sanity_role_name: {{ al_sanity_role_name }}
+      al_sanity_packages_gather_subset: {{ al_sanity_packages_gather_subset }}
 
-      al_sanity_packages_required
-      {{ al_sanity_packages_required|to_yaml }}
+      al_sanity_packages_required:
+        {{ al_sanity_packages_required|to_yaml(indent=2)|indent(2) }}
 
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
@@ -126,8 +126,7 @@
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_packages: Display ERROR required packages not installed. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] Packages {{ my_not_installed_packages }}
-          not installed in role {{ al_sanity_role_name }}"
+    msg: "[ERROR] Packages {{ my_not_installed_packages }} not installed in role {{ al_sanity_role_name }}"
   when: my_not_installed_packages|default([])|length > 0
 
 # Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

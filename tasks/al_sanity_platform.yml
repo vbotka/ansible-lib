@@ -76,7 +76,7 @@
   ansible.builtin.set_fact:
     al_supported_platforms: "{{ galaxy_info.platforms|json_query(query) }}"
   vars:
-    query: "[].name"
+    query: '[].name'
 - name: "al_sanity_platform: Get supported versions of {{ ansible_distribution }}."
   ansible.builtin.set_fact:
     al_supported_versions: "{{ galaxy_info.platforms|json_query(query)|
@@ -91,29 +91,29 @@
 - name: "al_sanity_platform: Debug. Print variables."
   vars:
     msg: |-
-      ansible_distribution [{{ ansible_distribution }}]
-      ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
-      ansible_distribution_version [{{ ansible_distribution_version }}]
-      ansible_distribution_release [{{ ansible_distribution_release }}]
-      ansible_python_version [{{ ansible_python_version }}]
+      ansible_distribution: {{ ansible_distribution }}
+      ansible_distribution_major_version: {{ ansible_distribution_major_version }}
+      ansible_distribution_version: {{ ansible_distribution_version }}
+      ansible_distribution_release: {{ ansible_distribution_release }}
+      ansible_python_version: {{ ansible_python_version }}
 
-      al_sanity_platform_test [{{ al_sanity_platform_test }}]
-      al_sanity_platform_version_test [{{ al_sanity_platform_version_test }}]
+      al_sanity_platform_test: {{ al_sanity_platform_test }}
+      al_sanity_platform_version_test: {{ al_sanity_platform_version_test }}
 
-      al_sanity_role_name [{{ al_sanity_role_name }}]
-      al_supported_platforms {{ al_supported_platforms }}
-      al_supported_versions {{ al_supported_versions }}
-      al_supported_versions_override {{ al_supported_versions_override }}
+      al_sanity_role_name: {{ al_sanity_role_name }}
+      al_supported_platforms: {{ al_supported_platforms }}
+      al_supported_versions: {{ al_supported_versions }}
+      al_supported_versions_override: {{ al_supported_versions_override }}
 
-      al_sanity_platform_gather_subset [{{ al_sanity_platform_gather_subset }}]
-      al_sanity_platform_fail [{{ al_sanity_platform_fail }}]
-      al_sanity_platform_version_fail [{{ al_sanity_platform_version_fail }}]
-      al_sanity_platform_end_host [{{ al_sanity_platform_end_host }}]
-      al_sanity_platform_version_end_host [{{ al_sanity_platform_version_end_host }}]
-      al_sanity_platform_warning [{{ al_sanity_platform_warning }}]
+      al_sanity_platform_gather_subset: {{ al_sanity_platform_gather_subset }}
+      al_sanity_platform_fail: {{ al_sanity_platform_fail }}
+      al_sanity_platform_version_fail: {{ al_sanity_platform_version_fail }}
+      al_sanity_platform_end_host: {{ al_sanity_platform_end_host }}
+      al_sanity_platform_version_end_host: {{ al_sanity_platform_version_end_host }}
+      al_sanity_platform_warning: {{ al_sanity_platform_warning }}
 
-      galaxy_info.platforms
-      {{ galaxy_info.platforms|to_nice_yaml }}
+      galaxy_info.platforms:
+        {{ galaxy_info.platforms|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
@@ -123,8 +123,7 @@
 # ERROR. Fail.
 - name: "al_sanity_platform: Print ERROR platform not supported. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] {{ al_sanity_platform_test }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: "[ERROR] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}."
   when:
     - al_sanity_platform_test not in al_supported_platforms
     - al_sanity_platform_fail|bool
@@ -133,8 +132,7 @@
   block:
     - name: "al_sanity_platform: Print ERROR platform not supported. End host."
       ansible.builtin.debug:
-        msg: "[ERROR] {{ al_sanity_platform_test }} not supported
-              by role {{ al_sanity_role_name }}. End host."
+        msg: "[ERROR] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
       ansible.builtin.meta: end_host
   when:
@@ -143,8 +141,7 @@
 # WARNING
 - name: "al_sanity_platform: Print WARNING platform not supported."
   ansible.builtin.debug:
-    msg: "[WARNING] {{ al_sanity_platform_test }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: "[WARNING] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}."
   when:
     - al_sanity_platform_test not in al_supported_platforms
     - al_sanity_platform_warning|bool
@@ -154,8 +151,7 @@
 # ERROR. Fail.
 - name: "al_sanity_platform: Print ERROR version not supported. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}."
   when:
     - al_sanity_platform_version_test not in al_supported_versions
     - al_sanity_platform_version_test not in al_supported_versions_override
@@ -165,8 +161,7 @@
   block:
     - name: "al_sanity_platform: Print ERROR version not supported. End host."
       ansible.builtin.debug:
-        msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported
-              by role {{ al_sanity_role_name }}. End host."
+        msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_platform: Meta end_host."
       ansible.builtin.meta: end_host
   when:
@@ -175,8 +170,7 @@
 # WARNING
 - name: "al_sanity_platform: Print WARNING version not supported."
   ansible.builtin.debug:
-    msg: "[WARNING] version {{ al_sanity_platform_version_test }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: "[WARNING] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}."
   when:
     - al_sanity_platform_version_test not in al_supported_versions
     - al_sanity_platform_warning|bool
@@ -184,9 +178,7 @@
 # Debug
 - name: "al_sanity_platform: Debug. Test supported platform and version passed."
   ansible.builtin.debug:
-    msg: "Role {{ al_sanity_role_name }} test supported platform
-          {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }}
-          passed."
+    msg: "Role {{ al_sanity_role_name }} test supported platform {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }} passed."
   when: al_debug|bool
 
 # EOF

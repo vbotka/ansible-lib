@@ -199,18 +199,18 @@
 - name: "al_pws_user_host: Debug."
   vars:
     msg: |-
-      al_pws_backup [{{ al_pws_backup }}]
-      al_pws_create [{{ al_pws_create }}]
-      al_pws_length [{{ al_pws_length }}]
-      al_pws_nosymbols [{{ al_pws_nosymbols }}]
-      al_pws_overwrite [{{ al_pws_overwrite }}]
-      al_pws_passwordstore [{{ al_pws_passwordstore }}]
-      al_pws_returnall [{{ al_pws_returnall }}]
-      al_pws_subkey [{{ al_pws_subkey }}]
-      al_pws_idempotent_password_hash [{{ al_pws_idempotent_password_hash }}]
-      al_pws_hostname_var [{{ al_pws_hostname_var }}]
-      al_pws_query
-      {{ al_pws_query|to_nice_yaml }}
+      al_pws_backup: {{ al_pws_backup }}
+      al_pws_create: {{ al_pws_create }}
+      al_pws_length: {{ al_pws_length }}
+      al_pws_nosymbols: {{ al_pws_nosymbols }}
+      al_pws_overwrite: {{ al_pws_overwrite }}
+      al_pws_passwordstore: {{ al_pws_passwordstore }}
+      al_pws_returnall: {{ al_pws_returnall }}
+      al_pws_subkey: {{ al_pws_subkey }}
+      al_pws_idempotent_password_hash: {{ al_pws_idempotent_password_hash }}
+      al_pws_hostname_var: {{ al_pws_hostname_var }}
+      al_pws_query:
+        {{ al_pws_query|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
@@ -264,9 +264,9 @@
 - name: "al_pws_user_host: Debug my_queries 1."
   vars:
     msg: |-
-      my_queries|length [{{ my_queries|length }}]
-      my_queries (JSON)
-      {{ my_queries|to_nice_json }}
+      my_queries|length: {{ my_queries|length }}
+      my_queries (JSON):
+        {{ my_queries|to_nice_json(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
@@ -296,8 +296,8 @@
 - name: "al_pws_user_host: Debug my_userpass_dict."
   vars:
     msg: |-
-      my_userpass_dict
-      {{ my_userpass_dict|to_nice_yaml }}
+      my_userpass_dict:
+      {{ my_userpass_dict|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
@@ -325,8 +325,8 @@
 - name: "al_pws_user_host: Debug my_salt_dict."
   vars:
     msg: |-
-      my_salt_dict
-      {{ my_salt_dict|to_nice_yaml }}
+      my_salt_dict:
+        {{ my_salt_dict|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
@@ -350,8 +350,8 @@
 - name: "al_pws_user_host: Debug my_password_dict."
   vars:
     msg: |-
-      my_password_dict
-      {{ my_password_dict|to_nice_yaml }}
+      my_password_dict:
+        {{ my_password_dict|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool
@@ -378,8 +378,8 @@
 - name: "al_pws_user_host: Debug al_pws_query_result."
   vars:
     msg: |-
-      al_pws_query_result
-      {{ al_pws_query_result|to_nice_yaml }}
+      al_pws_query_result:
+        {{ al_pws_query_result|to_nice_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug|bool

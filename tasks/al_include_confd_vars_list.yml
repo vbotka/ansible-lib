@@ -34,10 +34,10 @@
 - name: "al_include_confd_vars_list: Debug"
   vars:
     msg: |-
-      al_include_confd_dir [{{ al_include_confd_dir|default('UNDEFINED') }}]
-      al_include_confd_vars_list_type [{{ al_include_confd_vars_list_type }}]
-      al_include_confd_patterns [{{ al_include_confd_patterns }}]
-      al_include_confd_excludes [{{ al_include_confd_excludes }}]
+      al_include_confd_dir: {{ al_include_confd_dir|default('UNDEFINED') }}
+      al_include_confd_vars_list_type: {{ al_include_confd_vars_list_type }}
+      al_include_confd_patterns: {{ al_include_confd_patterns }}
+      al_include_confd_excludes: {{ al_include_confd_excludes }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
@@ -97,13 +97,13 @@
   ansible.builtin.include_tasks:
     file: fn/al_include_confd_vars_list_plain.yml
   loop: "{{ al_local_path_list }}"
-  when: al_include_confd_vars_list_type == "plain"
+  when: al_include_confd_vars_list_type == 'plain'
 # Create list of dictionaries with fname
 - name: "al_include_confd_vars_list: Create list of vars incl. fname"
   ansible.builtin.include_tasks:
     file: fn/al_include_confd_vars_list_fname.yml
   loop: "{{ al_local_path_list }}"
-  when: al_include_confd_vars_list_type == "fname"
+  when: al_include_confd_vars_list_type == 'fname'
 # Debug
 - name: "al_include_confd_vars_list: Debug al_include_confd_vars_list"
   ansible.builtin.debug:
