@@ -60,13 +60,13 @@
         - defaults.yml
       paths: "{{ al_os_vars_path }}/vars/defaults"
       skip: true
-# register: result
+  register: result
   when: _file|length > 0
 
-# - name: "al_include_os_vars_path: Debug result"
-#   ansible.builtin.debug:
-#     var: result
-#   when: al_debug|bool
+- name: "al_include_os_vars_path: Debug result"
+  ansible.builtin.debug:
+    var: result
+  when: al_debug|bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_include_os_vars_path: Vars from {{ al_os_vars_path }}/vars"
