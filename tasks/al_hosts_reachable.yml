@@ -48,9 +48,9 @@
 - name: "al_hosts_reachable: Debug."
   vars:
     msg: |-
-      al_hosts_reachable_group [{{ al_hosts_reachable_group }}]
-      al_hosts_unreachable_group [{{ al_hosts_unreachable_group }}]
-      al_hosts_connection_timeout [{{ al_hosts_connection_timeout }}]
+      al_hosts_reachable_group: {{ al_hosts_reachable_group }}
+      al_hosts_unreachable_group: {{ al_hosts_unreachable_group }}
+      al_hosts_connection_timeout: {{ al_hosts_connection_timeout }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool

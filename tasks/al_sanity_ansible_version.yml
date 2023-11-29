@@ -64,22 +64,22 @@
 - name: "al_sanity_ansible_version: Debug. Print variables."
   vars:
     msg: |-
-      ansible_distribution [{{ ansible_distribution }}]
-      ansible_distribution_major_version [{{ ansible_distribution_major_version }}]
-      ansible_distribution_version [{{ ansible_distribution_version }}]
-      ansible_distribution_release [{{ ansible_distribution_release }}]
-      ansible_python_version [{{ ansible_python_version }}]
+      ansible_distribution: {{ ansible_distribution }}
+      ansible_distribution_major_version: {{ ansible_distribution_major_version }}
+      ansible_distribution_version: {{ ansible_distribution_version }}
+      ansible_distribution_release: {{ ansible_distribution_release }}
+      ansible_python_version: {{ ansible_python_version }}
 
-      al_sanity_role_name [{{ al_sanity_role_name }}]
-      al_sanity_ansible_version_min [{{ al_sanity_ansible_version_min }}]
+      al_sanity_role_name: {{ al_sanity_role_name }}
+      al_sanity_ansible_version_min: {{ al_sanity_ansible_version_min }}
 
-      al_sanity_ansible_version_fail [{{ al_sanity_ansible_version_fail }}]
-      al_sanity_ansible_version_end_host [{{ al_sanity_ansible_version_end_host }}]
-      al_sanity_ansible_version_warning [{{ al_sanity_ansible_version_warning }}]
+      al_sanity_ansible_version_fail: {{ al_sanity_ansible_version_fail }}
+      al_sanity_ansible_version_end_host: {{ al_sanity_ansible_version_end_host }}
+      al_sanity_ansible_version_warning: {{ al_sanity_ansible_version_warning }}
 
-      al_sanity_ansible_version_override [{{ al_sanity_ansible_version_override|d('UNDEFINED') }}]
-      galaxy_info.min_ansible_version [{{ galaxy_info.min_ansible_version }}]
-      al_sanity_ansible_version_min [{{ al_sanity_ansible_version_min }}]
+      al_sanity_ansible_version_override: {{ al_sanity_ansible_version_override|d('UNDEFINED') }}
+      galaxy_info.min_ansible_version: {{ galaxy_info.min_ansible_version }}
+      al_sanity_ansible_version_min: {{ al_sanity_ansible_version_min }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
@@ -87,8 +87,8 @@
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Print ERROR version not supported. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] {{ ansible_version.full }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: |
+      [ERROR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}.
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
     - al_sanity_ansible_version_fail|bool
@@ -98,8 +98,7 @@
   block:
     - name: "al_sanity_ansible_version: Print ERROR Ansible version not supported. End host."
       ansible.builtin.debug:
-        msg: "[ERROR] {{ ansible_version.full }} not supported
-              by role {{ al_sanity_role_name }}. End host."
+        msg: "[ERROR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}. End host."
     - name: "al_sanity_ansible_version: Meta end_host."
       meta: end_host
   when:
@@ -109,8 +108,7 @@
 # WARNING - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 - name: "al_sanity_ansible_version: Print WARNING Ansible version not supported."
   ansible.builtin.debug:
-    msg: "[WARNING] {{ ansible_version.full }} not supported
-          by role {{ al_sanity_role_name }}."
+    msg: "[WARNING] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}."
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
     - al_sanity_ansible_version_warning|bool
@@ -119,8 +117,7 @@
 - name: "al_sanity_ansible_version: Debug. Test supported Ansible version passed."
   when: al_debug|bool
   ansible.builtin.debug:
-    msg: "Role {{ al_sanity_role_name }} test supported Ansible version
-          {{ ansible_version.full }} passed."
+    msg: "Role {{ al_sanity_role_name }} test supported Ansible version {{ ansible_version.full }} passed."
 
 # EOF
 ...

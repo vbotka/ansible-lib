@@ -55,10 +55,10 @@
     msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
-      al_bsd_ports_list
-      {{ al_bsd_ports_list|to_nice_yaml }}
-      al_bsd_ports_flavors
-      {{ al_bsd_ports_flavors|to_nice_yaml }}
+      al_bsd_ports_list:
+        {{ al_bsd_ports_list|to_nice_yaml(indent=2)|indent(2) }}
+      al_bsd_ports_flavors:
+        {{ al_bsd_ports_flavors|to_nice_yaml(indent=2)|indent(2) }}
   when: al_debug|bool
 
 - name: "al_bsd_ports_set_flavor: Create empty list"
@@ -84,8 +84,8 @@
     msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
-      al_bsd_ports_list
-      {{ al_bsd_ports_list|to_nice_yaml }}
+      al_bsd_ports_list:
+        {{ al_bsd_ports_list|to_nice_yaml(indent=2)|indent(2) }}
   when: al_debug|bool
 
 # EOF

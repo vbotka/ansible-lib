@@ -157,7 +157,7 @@
   when:
     - item.rc == 1
     - item.stderr_lines|length == 0
-    - item.stdout is search("running")
+    - item.stdout is search('running')
 
 - name: "al_bsd_service_facts: Select running states"
   ansible.builtin.set_fact:
@@ -169,7 +169,7 @@
   when:
     - item.rc == 0
     - item.stderr_lines|length == 0
-    - item.stdout is search("running")
+    - item.stdout is search('running')
 
 # EOF
 ...

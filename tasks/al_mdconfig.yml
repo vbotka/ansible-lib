@@ -56,8 +56,8 @@
 - name: "al_mdconfig: Debug."
   vars:
     msg: |-
-      al_mdconfig_file [{{ al_mdconfig_file }}]
-      al_mdconfig_state [{{ al_mdconfig_state }}]
+      al_mdconfig_file: {{ al_mdconfig_file }}
+      al_mdconfig_state: {{ al_mdconfig_state }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
@@ -113,9 +113,11 @@
   rescue:
     - name: "al_mdconfig: Rescue failed attached memory disk"
       ansible.builtin.fail:
-        msg: "[ERROR] Can't attach memory disk {{ al_mdconfig_file }}\n{{ result }}"
+        msg: |
+          [ERROR] Can't attach memory disk {{ al_mdconfig_file }}
+          {{ ansible_failed_result }}
   when:
-    - al_mdconfig_state == "present"
+    - al_mdconfig_state == 'present'
     - al_mdconfig_file not in al_mdconfig_devs.keys()|list
 
 # Detach memory disk - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,9 +133,11 @@
   rescue:
     - name: "al_mdconfig: Rescue failed detached memory disk"
       ansible.builtin.fail:
-        msg: "[ERROR] Can't detach memory disk {{ al_mdconfig_file }}\n{{ result }}"
+        msg: |
+          [ERROR] Can't detach memory disk {{ al_mdconfig_file }}
+          {{ ansible_failed_result }}
   when:
-    - al_mdconfig_state == "absent"
+    - al_mdconfig_state == 'absent'
     - al_mdconfig_file in al_mdconfig_devs.keys()|list
 
 # EOF
