@@ -32,6 +32,7 @@ Minor Changes
 * al_include_os_vars_path: Enable additional debug.
 * Add to sanity_packages: Test version of the platform.
 * Formatting comments.
+* Update README
   
 Bugfixes
 --------

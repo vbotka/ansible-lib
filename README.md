@@ -12,13 +12,13 @@ Feel free to [share your feedback and report issues](https://github.com/vbotka/a
 ## Description
 
 This role is a collection of independent tasks. The purpose is providing a library of reusable tasks
-which can be included in playbooks and other roles, e.g.
+that can be included in playbooks and other roles. For example,
 
-```
-       - name: Create groups of reachable and unreachable hosts.
-         include_role:
-           name: vbotka.ansible_lib
-           tasks_from: al_hosts_reachable
+```yaml
+- name: Create groups of reachable and unreachable hosts.
+  include_role:
+    name: vbotka.ansible_lib
+    tasks_from: al_hosts_reachable
 ```
 
 See the comments in the tasks.
