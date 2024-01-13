@@ -14,10 +14,10 @@ Ansible 2.16 update
 
 Major Changes
 -------------
- 
+
 Minor Changes
 -------------
-  
+
 Bugfixes
 --------
 
