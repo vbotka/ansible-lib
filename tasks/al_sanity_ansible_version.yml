@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,22 +46,24 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_sanity_ansible_version.yml
 
-- name: "al_sanity_ansible_version: Fail when galaxy_info not defined."
+- name: "Al_sanity_ansible_version: Fail when galaxy_info not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable galaxy_info not defined."
+    msg: "[ERR] Mandatory variable galaxy_info not defined."
   when: galaxy_info is undefined
 
-- name: "al_sanity_ansible_version: Fail when al_sanity_role_name not defined."
+- name: "Al_sanity_ansible_version: Fail when al_sanity_role_name not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
+    msg: "[ERR] Mandatory variable al_sanity_role_name not defined."
   when: al_sanity_role_name is undefined
 
-- name: "al_sanity_ansible_version: Get Ansible minimal version."
+- name: "Al_sanity_ansible_version: Get Ansible minimal version."
   ansible.builtin.set_fact:
-    al_sanity_ansible_version_min: "{{ al_sanity_ansible_version_override|d(galaxy_info.min_ansible_version) }}"
+    al_sanity_ansible_version_min: "{{ al_sanity_ansible_version_override |
+                                       d(galaxy_info.min_ansible_version) }}"
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_ansible_version: Debug. Print variables."
+
+- name: "Al_sanity_ansible_version: Debug. Print variables."
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -77,47 +79,59 @@
       al_sanity_ansible_version_end_host: {{ al_sanity_ansible_version_end_host }}
       al_sanity_ansible_version_warning: {{ al_sanity_ansible_version_warning }}
 
-      al_sanity_ansible_version_override: {{ al_sanity_ansible_version_override|d('UNDEFINED') }}
+      al_sanity_ansible_version_override: {{ al_sanity_ansible_version_override | d('UNDEFINED') }}
       galaxy_info.min_ansible_version: {{ galaxy_info.min_ansible_version }}
       al_sanity_ansible_version_min: {{ al_sanity_ansible_version_min }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_debug|bool
+  when: al_debug | bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_ansible_version: Print ERROR version not supported. Fail."
+
+- name: "Al_sanity_ansible_version: Print ERROR version not supported. Fail."
   ansible.builtin.fail:
     msg: |
-      [ERROR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}.
+      [ERR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}.
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
-    - al_sanity_ansible_version_fail|bool
+    - al_sanity_ansible_version_fail | bool
 
 # ERROR. End host - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_ansible_version: Test Ansible version is supported. End host if not."
-  block:
-    - name: "al_sanity_ansible_version: Print ERROR Ansible version not supported. End host."
-      ansible.builtin.debug:
-        msg: "[ERROR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}. End host."
-    - name: "al_sanity_ansible_version: Meta end_host."
-      meta: end_host
+
+- name: "Al_sanity_ansible_version: Test Ansible version is supported. End host if not."
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
-    - al_sanity_ansible_version_end_host|bool
+    - al_sanity_ansible_version_end_host | bool
+  block:
+
+    - name: "Al_sanity_ansible_version: Print ERROR Ansible version not supported. End host."
+      ansible.builtin.debug:
+        msg: >-
+          [ERR] Ansible version {{ ansible_version.full }}
+          is not supported by the role {{ al_sanity_role_name }}
+
+    - name: "Al_sanity_ansible_version: Meta end_host."
+      ansible.builtin.meta: end_host
 
 # WARNING - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_ansible_version: Print WARNING Ansible version not supported."
+
+- name: "Al_sanity_ansible_version: Print WARNING Ansible version not supported."
   ansible.builtin.debug:
-    msg: "[WARNING] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}."
+    msg: >-
+      [WARNING] Ansible version {{ ansible_version.full }}
+      is not supported by the role {{ al_sanity_role_name }}
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
-    - al_sanity_ansible_version_warning|bool
+    - al_sanity_ansible_version_warning | bool
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_ansible_version: Debug. Test supported Ansible version passed."
-  when: al_debug|bool
+
+- name: "Al_sanity_ansible_version: Debug. Test supported Ansible version passed."
   ansible.builtin.debug:
-    msg: "Role {{ al_sanity_role_name }} test supported Ansible version {{ ansible_version.full }} passed."
+    msg: >-
+      Ansible version {{ ansible_version.full }}
+      is supported by the role {{ al_sanity_role_name }}
+  when: al_debug | bool
 
 # EOF
 ...

@@ -1,8 +1,8 @@
 ---
-# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
-- name: "Ansible lib Debug"
+- name: Ansible lib Debug
   vars:
     msg: |-
       ansible_architecture: {{ ansible_architecture }}

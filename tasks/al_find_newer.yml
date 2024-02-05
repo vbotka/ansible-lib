@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,24 +60,23 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_find_newer.yml
 
-- name: "al_find_newer: Default variables."
+- name: "Al_find_newer: Default variables."
   ansible.builtin.set_fact:
-    al_find_newer_timestamp: "{{ al_find_newer_timestamp|
-                                 default('/var/tmp/al-newer-timestamp') }}"
-    al_find_newer_time: "{{ al_find_newer_time|default('mtime') }}"
-    al_debug: "{{ al_debug|default(false) }}"
+    al_find_newer_timestamp: "{{ al_find_newer_timestamp | d('/var/tmp/al-newer-timestamp') }}"
+    al_find_newer_time: "{{ al_find_newer_time | d('mtime') }}"
+    al_debug: "{{ al_debug | d(false) }}"
 
-- name: "al_find_newer: Sanity al_find_newer_dir."
+- name: "Al_find_newer: Sanity al_find_newer_dir."
   ansible.builtin.fail:
-    msg: "[ERROR] Variable al_find_newer_dir not defined."
+    msg: "[ERR] Variable al_find_newer_dir not defined."
   when: al_find_newer_dir is not defined
 
-- name: "al_find_newer: Sanity al_find_newer_time."
+- name: "Al_find_newer: Sanity al_find_newer_time."
   ansible.builtin.fail:
-    msg: "[ERROR] Variable al_find_newer_time must be one of [ctime, atime, mtime]."
+    msg: "[ERR] Variable al_find_newer_time must be one of [ctime, atime, mtime]."
   when: al_find_newer_time not in ['ctime', 'atime', 'mtime']
 
-- name: "al_find_newer: Read timestamp (default: 0)"
+- name: "Al_find_newer: Read timestamp (default=0)"
   ansible.builtin.set_fact:
     my_timestamp: "{{ lookup('ansible.builtin.pipe', 'sh -c ' ~ my_command) }}"
   vars:
@@ -86,34 +85,34 @@
       cat {{ al_find_newer_timestamp }} ||
       echo 0'
 
-- name: "al_find_newer: Debug my_timestamp"
+- name: "Al_find_newer: Debug my_timestamp"
   ansible.builtin.debug:
     var: my_timestamp
-  when: al_debug| bool
+  when: al_debug | bool
 
-- name: "al_find_newer: Find files in {{ al_find_newer_dir }}"
+- name: "Al_find_newer: Find files in {{ al_find_newer_dir }}"
   ansible.builtin.find:
     paths: "{{ al_find_newer_dir }}"
   register: my_result
 
-- name: "al_find_newer: Debug my_result"
+- name: "Al_find_newer: Debug my_result"
   ansible.builtin.debug:
     var: my_result
-  when: al_debug| bool
+  when: al_debug | bool
 
-- name: "al_find_newer: Select newer files. Set default time 0"
+- name: "Al_find_newer: Select newer files. Set default time 0"
   ansible.builtin.set_fact:
     al_find_newer_maxtime: 0
-    al_find_newer_list: "{{ my_result.files|json_query(query) }}"
+    al_find_newer_list: "{{ my_result.files | json_query(query) }}"
   vars:
     query: "[?{{ al_find_newer_time }} > to_number('{{ my_timestamp }}')].path"
 
-- name: "al_find_newer: Find {{ al_find_newer_time }} of the newest file."
+- name: "Al_find_newer: Find newest file by {{ al_find_newer_time }}"
   ansible.builtin.set_fact:
-    al_find_newer_maxtime: "{{ my_result.files|json_query(query)|max }}"
+    al_find_newer_maxtime: "{{ my_result.files | json_query(query) | max }}"
   vars:
     query: "[].{{ al_find_newer_time }}"
-  when: my_result.files|length > 0
+  when: my_result.files | length > 0
 
 # EOF
 ...

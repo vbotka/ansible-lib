@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2021-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,74 +101,76 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_bsd_service_facts.yml
 
-- name: "al_bsd_service_facts: Create list al_bsd_service_paths"
+- name: "Al_bsd_service_facts: Create list al_bsd_service_paths"
+  when: al_bsd_service_paths | d([]) | length == 0
   block:
-    - name: "al_bsd_service_facts: Find all rc scripts"
+
+    - name: "Al_bsd_service_facts: Find all rc scripts"
       ansible.builtin.find:
         paths:
           - /etc/rc.d
           - /usr/local/etc/rc.d
       register: rc_scripts
-    - name: "al_bsd_service_facts: Set al_bsd_service_paths"
+
+    - name: "Al_bsd_service_facts: Set al_bsd_service_paths"
       ansible.builtin.set_fact:
-        al_bsd_service_paths: "{{ rc_scripts.files|map(attribute='path')|list }}"
-  when: al_bsd_service_paths|default([])|length == 0
+        al_bsd_service_paths: "{{ rc_scripts.files | map(attribute='path') | list }}"
 
-- name: "al_bsd_service_facts: Debug al_bsd_service_paths"
+- name: "Al_bsd_service_facts: Debug al_bsd_service_paths"
   ansible.builtin.debug:
-    var: al_bsd_service_paths|sort
-  when: al_debug| bool
+    var: al_bsd_service_paths | sort
+  when: al_debug | bool
 
-- name: "al_bsd_service_facts: Get onestatus"
+- name: "Al_bsd_service_facts: Get onestatus"
   ansible.builtin.command:
     cmd: "{{ item }} onestatus"
-  loop: "{{ al_bsd_service_paths|sort }}"
+  loop: "{{ al_bsd_service_paths | sort }}"
   register: service_status
   ignore_errors: true
   changed_when: false
 
-- name: "al_bsd_service_facts: Debug service_status"
+- name: "Al_bsd_service_facts: Debug service_status"
   ansible.builtin.debug:
     msg: "{{ service_status }}"
   when: al_debug| bool
 
-- name: "al_bsd_service_facts: Set empty al_ansible_facts_services"
+- name: "Al_bsd_service_facts: Set empty al_ansible_facts_services"
   ansible.builtin.set_fact:
     al_ansible_facts_services: {}
 
-- name: "al_bsd_service_facts: Select unknown states"
+- name: "Al_bsd_service_facts: Select unknown states"
   ansible.builtin.set_fact:
-    al_ansible_facts_services: "{{ al_ansible_facts_services|
-                                   combine({(item.item|basename): {'state': 'unknown'}}) }}"
+    al_ansible_facts_services: "{{ al_ansible_facts_services |
+                                   combine({(item.item | basename): {'state': 'unknown'}}) }}"
   loop: "{{ service_status.results }}"
   loop_control:
     label: "{{ item.item }}"
   when:
     - item.rc != 0
-    - item.stderr_lines|length > 0
+    - item.stderr_lines | length > 0
 
-- name: "al_bsd_service_facts: Select stopped states"
+- name: "Al_bsd_service_facts: Select stopped states"
   ansible.builtin.set_fact:
-    al_ansible_facts_services: "{{ al_ansible_facts_services|
-                                   combine({item.item|basename: {'state': 'stopped'}}) }}"
+    al_ansible_facts_services: "{{ al_ansible_facts_services |
+                                   combine({item.item | basename: {'state': 'stopped'}}) }}"
   loop: "{{ service_status.results }}"
   loop_control:
     label: "{{ item.item }}"
   when:
     - item.rc == 1
-    - item.stderr_lines|length == 0
+    - item.stderr_lines | length == 0
     - item.stdout is search('running')
 
-- name: "al_bsd_service_facts: Select running states"
+- name: "Al_bsd_service_facts: Select running states"
   ansible.builtin.set_fact:
-    al_ansible_facts_services: "{{ al_ansible_facts_services|
-                                   combine({item.item|basename: {'state': 'running'}}) }}"
+    al_ansible_facts_services: "{{ al_ansible_facts_services |
+                                   combine({item.item | basename: {'state': 'running'}}) }}"
   loop: "{{ service_status.results }}"
   loop_control:
     label: "{{ item.item }}"
   when:
     - item.rc == 0
-    - item.stderr_lines|length == 0
+    - item.stderr_lines | length == 0
     - item.stdout is search('running')
 
 # EOF

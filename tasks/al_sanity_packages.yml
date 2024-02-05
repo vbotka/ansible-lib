@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2023, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,24 +78,25 @@
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "al_sanity_packages: Fail when al_sanity_role_name not defined."
+- name: "Al_sanity_packages: Fail when al_sanity_role_name not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
+    msg: "[ERR] Mandatory variable al_sanity_role_name not defined."
   when: al_sanity_role_name is undefined
 
-- name: "al_sanity_packages: Fail when al_sanity_packages_required not defined."
+- name: "Al_sanity_packages: Fail when al_sanity_packages_required not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable al_sanity_packages_required not defined."
+    msg: "[ERR] Mandatory variable al_sanity_packages_required not defined."
   when: al_sanity_packages_required is undefined
 
-- name: "al_sanity_packages: Setup. Collect minimal subset."
+- name: "Al_sanity_packages: Setup. Collect minimal subset."
   ansible.builtin.setup:
     gather_subset:
-      - '!all'
-  when: al_sanity_packages_gather_subset|bool
+      - "!all"
+  when: al_sanity_packages_gather_subset | bool
 
-  # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_packages: Debug. Print variables."
+# Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- name: "Al_sanity_packages: Debug. Print variables."
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -110,46 +111,55 @@
         {{ al_sanity_packages_required|to_yaml(indent=2)|indent(2) }}
       (my_sanity_packages_required):
         {{ al_sanity_packages_required[ansible_distribution][ansible_distribution_release]|
-           default(al_sanity_packages_required[ansible_distribution]['default'])|
+           d(al_sanity_packages_required[ansible_distribution]['default'])|
            to_yaml(indent=2)|indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_debug|bool
+  when: al_debug | bool
 
-  # Find not installed packages - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_packages: Collect installed packages."
+# Find not installed packages - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- name: "Al_sanity_packages: Collect installed packages."
   ansible.builtin.package_facts:
-- name: "al_sanity_packages: Set list of installed packages."
+
+- name: "Al_sanity_packages: Set list of installed packages."
   ansible.builtin.set_fact:
-    my_installed_packages: "{{ ansible_facts.packages.keys()|list }}"
-- name: "al_sanity_packages: Set list of not installed packages."
+    my_installed_packages: "{{ ansible_facts.packages.keys() | list }}"
+
+- name: "Al_sanity_packages: Set list of not installed packages."
   ansible.builtin.set_fact:
-    my_not_installed_packages: "{{ my_not_installed_packages|default([]) + _item }}"
-  loop: "{{ al_sanity_packages_required[ansible_distribution][ansible_distribution_release]|
-            default(al_sanity_packages_required[ansible_distribution]['default']) }}"
-  when: _item|flatten|intersect(my_installed_packages)|length == 0
+    my_not_installed_packages: "{{ my_not_installed_packages | d([]) + _item }}"
+  loop: "{{ al_sanity_packages_required[ansible_distribution][ansible_distribution_release] |
+            d(al_sanity_packages_required[ansible_distribution]['default']) }}"
+  when: _item | flatten | intersect(my_installed_packages) | length == 0
   vars:
-    _item: "{{ [item]|flatten }}"
-- name: "al_sanity_packages: Debug. Display my_installed_packages."
+    _item: "{{ [item] | flatten }}"
+
+- name: "Al_sanity_packages: Debug. Display my_installed_packages"
   ansible.builtin.debug:
     msg: "Installed packages: {{ my_installed_packages }}"
-  when: al_debug|bool
-- name: "al_sanity_packages: Debug. Display my_not_installed_packages."
-  ansible.builtin.debug:
-    msg: "Not installed packages: {{ my_not_installed_packages|default([]) }}"
-  when: al_debug|bool
+  when: al_debug | bool
 
-  # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_packages: Display ERROR required packages not installed. Fail."
+- name: "Al_sanity_packages: Debug. Display my_not_installed_packages"
+  ansible.builtin.debug:
+    msg: "Not installed packages: {{ my_not_installed_packages | default([]) }}"
+  when: al_debug | bool
+
+# ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- name: "Al_sanity_packages: Display ERROR required packages not installed. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] Packages {{ my_not_installed_packages }} not installed in role {{ al_sanity_role_name }}"
-  when: my_not_installed_packages|default([])|length > 0
+    msg: >-
+      [ERR] Required packages: {{ my_not_installed_packages }}
+      not installed in the role {{ al_sanity_role_name }}
+  when: my_not_installed_packages | d([]) | length > 0
 
-  # Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_packages: Debug. Test required packages passed."
+# Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- name: "Al_sanity_packages: Debug. Test required packages passed."
   ansible.builtin.debug:
-    msg: "Role {{ al_sanity_role_name }} test required packages passed."
-  when: al_debug|bool
+    msg: All required packages installed in the role {{ al_sanity_role_name }}
+  when: al_debug | bool
 
 # EOF
 ...

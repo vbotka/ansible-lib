@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,33 +39,32 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_runner_events.yml
 
-- name: "al_runner_events: Find files"
+- name: "Al_runner_events: Find files"
   ansible.builtin.find:
     paths: "{{ al_runner_events_dir }}"
   register: result
 
-- name: "al_runner_events: Include events from the files"
+- name: "Al_runner_events: Include events from the files"
   ansible.builtin.include_vars:
     file: "{{ item }}"
     name: "{{ 'my_var_' ~ my_idx }}"
-  loop: "{{ result.files|json_query('[].path') }}"
+  loop: "{{ result.files | json_query('[].path') }}"
   loop_control:
     index_var: my_idx
 
-- name: "al_runner_events: Create list of events"
+- name: "Al_runner_events: Create list of events"
   ansible.builtin.set_fact:
-    al_runner_events_list: "{{ al_runner_events_list|default([]) +
+    al_runner_events_list: "{{ al_runner_events_list | d([]) +
                                [lookup('ansible.builtin.vars', my_key)] }}"
-  loop: "{{ range(0, result.matched)|list }}"
+  loop: "{{ range(0, result.matched) | list }}"
   loop_control:
     index_var: my_idx
   vars:
     my_key: "{{ 'my_var_' ~ my_idx }}"
 
-- name: "al_runner_events: Sort list of events"
+- name: "Al_runner_events: Sort list of events"
   ansible.builtin.set_fact:
-    al_runner_events_list: "{{ al_runner_events_list|
-                               sort(attribute='counter') }}"
+    al_runner_events_list: "{{ al_runner_events_list | sort(attribute='counter') }}"
 
 # EOF
 ...

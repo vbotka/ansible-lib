@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2023, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -56,39 +56,42 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_sanity_platform.yml
 
-- name: "al_sanity_platform: Fail when galaxy_info not defined."
+- name: "Al_sanity_platform: Fail when galaxy_info not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable galaxy_info not defined."
+    msg: "[ERR] Mandatory variable galaxy_info not defined."
   when: galaxy_info is undefined
 
-- name: "al_sanity_platform: Fail when al_sanity_role_name not defined."
+- name: "Al_sanity_platform: Fail when al_sanity_role_name not defined."
   ansible.builtin.fail:
-    msg: "[ERROR] Mandatory variable al_sanity_role_name not defined."
+    msg: "[ERR] Mandatory variable al_sanity_role_name not defined."
   when: al_sanity_role_name is undefined
 
-- name: "al_sanity_platform: Setup. Collect minimal subset."
+- name: "Al_sanity_platform: Setup. Collect minimal subset."
   ansible.builtin.setup:
     gather_subset:
-      - '!all'
-  when: al_sanity_platform_gather_subset|bool
+      - "!all"
+  when: al_sanity_platform_gather_subset | bool
 
-- name: "al_sanity_platform: Get supported platforms."
+- name: "Al_sanity_platform: Get supported platforms."
   ansible.builtin.set_fact:
-    al_supported_platforms: "{{ galaxy_info.platforms|json_query(query) }}"
+    al_supported_platforms: "{{ galaxy_info.platforms | json_query(query) }}"
   vars:
-    query: '[].name'
-- name: "al_sanity_platform: Get supported versions of {{ ansible_distribution }}."
+    query: "[].name"
+
+- name: "Al_sanity_platform: Get supported versions of {{ ansible_distribution }}."
   ansible.builtin.set_fact:
-    al_supported_versions: "{{ galaxy_info.platforms|json_query(query)|
-                               flatten|map('quote')|list }}"
+    al_supported_versions: "{{ galaxy_info.platforms |
+                               json_query(query) | flatten | map('quote') | list }}"
   vars:
     query: "[?name == '{{ ansible_distribution }}'].versions"
-- name: "al_sanity_platform: Set test variables."
-  ansible.builtin.include_tasks:
-    file: "fn/al_include_sanity_platform_test_vars.yml"
 
-  # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_sanity_platform: Debug. Print variables."
+- name: "Al_sanity_platform: Set test variables."
+  ansible.builtin.include_tasks:
+    file: fn/al_include_sanity_platform_test_vars.yml
+
+# Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- name: "Al_sanity_platform: Debug. Print variables."
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -113,73 +116,97 @@
       al_sanity_platform_warning: {{ al_sanity_platform_warning }}
 
       galaxy_info.platforms:
-        {{ galaxy_info.platforms|to_nice_yaml(indent=2)|indent(2) }}
+        {{ galaxy_info.platforms | to_nice_yaml(indent=2) | indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_debug|bool
+  when: al_debug | bool
 
-  # Test platform - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Test platform - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  # ERROR. Fail.
-- name: "al_sanity_platform: Print ERROR platform not supported. Fail."
+# ERROR. Fail.
+- name: "Al_sanity_platform: Print ERROR platform not supported. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}."
+    msg: >-
+      [ERR] platform {{ al_sanity_platform_test }}
+      not supported by role {{ al_sanity_role_name }}
   when:
     - al_sanity_platform_test not in al_supported_platforms
-    - al_sanity_platform_fail|bool
-  # ERROR. End host.
-- name: "al_sanity_platform: Test platform is supported. End host if not."
+    - al_sanity_platform_fail | bool
+
+# ERROR. End host.
+- name: Platform not supported. End host.
+  when:
+    - al_sanity_platform_test not in al_supported_platforms
+    - al_sanity_platform_end_host | bool
   block:
-    - name: "al_sanity_platform: Print ERROR platform not supported. End host."
+
+    - name: "Al_sanity_platform: Print ERROR platform not supported. End host."
       ansible.builtin.debug:
-        msg: "[ERROR] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}. End host."
-    - name: "al_sanity_platform: Meta end_host."
+        msg: >-
+          [ERR] platform {{ al_sanity_platform_test }}
+          not supported by role {{ al_sanity_role_name }}. End host.
+
+    - name: "Al_sanity_platform: End_host."
       ansible.builtin.meta: end_host
-  when:
-    - al_sanity_platform_test not in al_supported_platforms
-    - al_sanity_platform_end_host|bool
-  # WARNING
-- name: "al_sanity_platform: Print WARNING platform not supported."
+
+# WARNING
+- name: "Al_sanity_platform: Print WARNING platform not supported."
   ansible.builtin.debug:
-    msg: "[WARNING] {{ al_sanity_platform_test }} not supported by role {{ al_sanity_role_name }}."
+    msg: >-
+      [WARNING] {{ al_sanity_platform_test }}
+      not supported by role {{ al_sanity_role_name }}
   when:
     - al_sanity_platform_test not in al_supported_platforms
-    - al_sanity_platform_warning|bool
+    - al_sanity_platform_warning | bool
 
-  # Test platform version - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Test platform version - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  # ERROR. Fail.
-- name: "al_sanity_platform: Print ERROR version not supported. Fail."
+# ERROR. Fail.
+- name: "Al_sanity_platform: Print ERROR version not supported. Fail."
   ansible.builtin.fail:
-    msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}."
+    msg: >-
+      [ERR] version {{ al_sanity_platform_version_test }}
+      not supported by role {{ al_sanity_role_name }}
   when:
     - al_sanity_platform_version_test not in al_supported_versions
     - al_sanity_platform_version_test not in al_supported_versions_override
-    - al_sanity_platform_version_fail|bool
-  # ERROR. End host.
-- name: "al_sanity_platform: Test version is supported. End host if not."
-  block:
-    - name: "al_sanity_platform: Print ERROR version not supported. End host."
-      ansible.builtin.debug:
-        msg: "[ERROR] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}. End host."
-    - name: "al_sanity_platform: Meta end_host."
-      ansible.builtin.meta: end_host
-  when:
-    - al_sanity_platform_version_test not in al_supported_versions
-    - al_sanity_platform_version_end_host|bool
-  # WARNING
-- name: "al_sanity_platform: Print WARNING version not supported."
-  ansible.builtin.debug:
-    msg: "[WARNING] version {{ al_sanity_platform_version_test }} not supported by role {{ al_sanity_role_name }}."
-  when:
-    - al_sanity_platform_version_test not in al_supported_versions
-    - al_sanity_platform_warning|bool
+    - al_sanity_platform_version_fail | bool
 
-  # Debug
-- name: "al_sanity_platform: Debug. Test supported platform and version passed."
+# ERROR. End host.
+- name: Version not supported. End host.
+  when:
+    - al_sanity_platform_version_test not in al_supported_versions
+    - al_sanity_platform_version_test not in al_supported_versions_override
+    - al_sanity_platform_version_end_host | bool
+  block:
+
+    - name: "Al_sanity_platform: Print ERROR version not supported. End host."
+      ansible.builtin.debug:
+        msg: >-
+          [ERROR] version {{ al_sanity_platform_version_test }}
+          not supported by role {{ al_sanity_role_name }}. End host.
+
+    - name: "Al_sanity_platform: End_host."
+      ansible.builtin.meta: end_host
+
+# WARNING
+- name: "Al_sanity_platform: Print WARNING version not supported."
   ansible.builtin.debug:
-    msg: "Role {{ al_sanity_role_name }} test supported platform {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }} passed."
-  when: al_debug|bool
+    msg: >-
+      [WARNING] version {{ al_sanity_platform_version_test }}
+      not supported by role {{ al_sanity_role_name }}
+  when:
+    - al_sanity_platform_version_test not in al_supported_versions
+    - al_sanity_platform_version_test not in al_supported_versions_override
+    - al_sanity_platform_warning | bool
+
+# Pass debug
+- name: "Al_sanity_platform: Debug. Test supported platform and version passed."
+  ansible.builtin.debug:
+    msg: >-
+      Role {{ al_sanity_role_name }} test supported platform
+      {{ al_sanity_platform_test }} {{ al_sanity_platform_version_test }} passed.
+  when: al_debug | bool
 
 # EOF
 ...
