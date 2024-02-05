@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2021-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,9 +21,10 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_playbook_dir_incr.yml
 
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars/defaults"
+
+- name: "Al_include_os_vars_playbook_dir_incr: vars from {{ playbook_dir ~ 'vars/defaults' }}"
   ansible.builtin.include_vars: "{{ item }}"
-# register: result
+  # register: result
   loop:
     - "{{ my_path }}/defaults.yml"
     - "{{ my_path }}/default.yml"
@@ -37,12 +38,13 @@
 # - name: "al_include_os_vars_playbook_dir_incr: Debug include default vars"
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug|bool
+#   when: al_debug | bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_include_os_vars_playbook_dir_incr: Vars from {{ playbook_dir }}/vars"
+
+- name: "Al_include_os_vars_playbook_dir_incr: vars from {{ playbook_dir ~ '/vars' }}"
   ansible.builtin.include_vars: "{{ item }}"
-# register: result
+  # register: result
   loop:
     - "{{ my_path }}/defaults.yml"
     - "{{ my_path }}/default.yml"

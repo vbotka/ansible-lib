@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -57,27 +57,27 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_git_checkout.yml
 
-- name: "al_git_checkout: Set default values."
+- name: "Al_git_checkout: Set default values."
   ansible.builtin.set_fact:
-    my_default_user: "{{ lookup('ansible.builtin.env','USER') }}"
+    my_default_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
     my_default_path: "{{ lookup('ansible.builtin.env','HOME') ~ '/.ansible/repos' }}"
 
-- name: "al_git_checkout: Default variables."
+- name: "Al_git_checkout: Default variables."
   ansible.builtin.set_fact:
-    al_git_checkout_module: "{{ al_git_checkout_module|default(true) }}"
-    al_git_checkout_git_user: "{{ al_git_checkout_git_user|default('admin') }}"
-    al_git_checkout_user: "{{ al_git_checkout_user|default(my_default_user) }}"
-    al_git_checkout_group: "{{ al_git_checkout_group|default(my_default_user) }}"
-    al_git_checkout_mode: "{{ al_git_checkout_mode|default('u=+rwX,g=+rX-w,o=-rwx') }}"
-    al_git_checkout_repos_path: "{{ al_git_checkout_repos_path|default(my_default_path) }}"
-    al_git_checkout_repos_file: "{{ al_git_checkout_repos_file|default('vars/repos.yml') }}"
-    al_debug: "{{ al_debug|default(false) }}"
+    al_git_checkout_module: "{{ al_git_checkout_module | d(true) }}"
+    al_git_checkout_git_user: "{{ al_git_checkout_git_user | d('admin') }}"
+    al_git_checkout_user: "{{ al_git_checkout_user | d(my_default_user) }}"
+    al_git_checkout_group: "{{ al_git_checkout_group | d(my_default_user) }}"
+    al_git_checkout_mode: "{{ al_git_checkout_mode | d('u=+rwX,g=+rX-w,o=-rwx') }}"
+    al_git_checkout_repos_path: "{{ al_git_checkout_repos_path | d(my_default_path) }}"
+    al_git_checkout_repos_file: "{{ al_git_checkout_repos_file | d('vars/repos.yml') }}"
+    al_debug: "{{ al_debug | d(false) }}"
 
-- name: "al_git_checkout: Include list of repos from {{ al_git_checkout_repos_file }}"
+- name: "Al_git_checkout: Include list of repos from {{ al_git_checkout_repos_file }}"
   ansible.builtin.include_vars:
     file: "{{ al_git_checkout_repos_file }}"
 
-- name: "al_git_checkout: Debug."
+- name: "Al_git_checkout: Debug."
   vars:
     msg: |-
       al_git_checkout_module: {{ al_git_checkout_module }}
@@ -88,12 +88,12 @@
       al_git_checkout_repos_path: {{ al_git_checkout_repos_path }}
       al_git_checkout_repos_file: {{ al_git_checkout_repos_file }}
       requirements:
-        {{ requirements|to_nice_yaml(indent=2)|indent(2) }}
+        {{ requirements | to_nice_yaml(indent=2) | indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug|bool
 
-- name: "al_git_checkout: Create directory {{ al_git_checkout_repos_path }}"
+- name: "Al_git_checkout: Create directory {{ al_git_checkout_repos_path }}"
   ansible.builtin.file:
     state: directory
     dest: "{{ al_git_checkout_repos_path }}"
@@ -101,34 +101,35 @@
     group: "{{ al_git_checkout_group }}"
     mode: "{{ al_git_checkout_mode }}"
 
-- name: "al_git_checkout: Git install repos."
+- name: "Al_git_checkout: Git install repos."
   ansible.builtin.git:
     repo: "{{ item.src }}"
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
-    version: "{{ item.version|default('HEAD') }}"
+    version: "{{ item.version | d('HEAD') }}"
   loop: "{{ requirements }}"
   when:
-    - item.install|default(true)
-    - al_git_checkout_module|bool
+    - item.install | d(true)
+    - al_git_checkout_module | bool
 
-- name: "al_git_checkout: Command install repos."
+- name: "Al_git_checkout: Command install repos."
   ansible.builtin.command:
     chdir: "{{ al_git_checkout_repos_path }}"
-    cmd: |
+    cmd: >-
       /bin/sh -c
-      "cd {{ al_git_checkout_repos_path }};
-      if [ -e {{ item.name|quote }} ]; then
+      'cd {{ al_git_checkout_repos_path }};
+      if [ -e {{ item.name | quote }} ]; then
          (cd {{ item.name }}; git pull);
       else
          git clone {{ item.src }} {{ item.name }};
-      fi"
+      fi'
   loop: "{{ requirements }}"
+  changed_when: false  # TODO: Test registered result
   when:
-    - item.install|default(true)
-    - not al_git_checkout_module|bool
+    - item.install | d(true)
+    - not al_git_checkout_module | bool
     - not ansible_check_mode
 
-- name: "al_git_checkout: Chown and chmod repos."
+- name: "Al_git_checkout: Chown and chmod repos."
   ansible.builtin.file:
     state: directory
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
@@ -137,10 +138,10 @@
     mode: "{{ al_git_checkout_mode }}"
   loop: "{{ requirements }}"
   when:
-    - item.install|default(true)
+    - item.install | d(true)
     - not ansible_check_mode
 
-- name: "al_git_checkout: Link repos."
+- name: "Al_git_checkout: Link repos."
   ansible.builtin.file:
     state: link
     src: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
@@ -149,7 +150,7 @@
     group: "{{ al_git_checkout_group }}"
   loop: "{{ requirements }}"
   when:
-    - item.install|default(true)
+    - item.install | d(true)
     - item.link is defined
     - not ansible_check_mode
 

@@ -10,19 +10,7 @@ vbotka.ansible_lib 2.6 Release Notes
 
 Release Summary
 ---------------
-
-
-Major Changes
--------------
-
-Minor Changes
--------------
-
-Bugfixes
---------
-
-Breaking Changes / Porting Guide
---------------------------------
+Fix Ansible lint.
 
 
 2.6.0

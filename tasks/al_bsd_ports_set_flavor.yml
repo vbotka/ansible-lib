@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2021-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,43 +50,43 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_bsd_ports_set_flavor.yml
 
-- name: "al_bsd_ports_set_flavor: Debug variables"
+- name: "Al_bsd_ports_set_flavor: Debug variables"
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
       al_bsd_ports_list:
-        {{ al_bsd_ports_list|to_nice_yaml(indent=2)|indent(2) }}
+        {{ al_bsd_ports_list | to_nice_yaml(indent=2) | indent(2) }}
       al_bsd_ports_flavors:
-        {{ al_bsd_ports_flavors|to_nice_yaml(indent=2)|indent(2) }}
-  when: al_debug|bool
+        {{ al_bsd_ports_flavors | to_nice_yaml(indent=2) | indent(2) }}
+  when: al_debug | bool
 
-- name: "al_bsd_ports_set_flavor: Create empty list"
+- name: "Al_bsd_ports_set_flavor: Create empty list"
   ansible.builtin.set_fact:
     al_bsd_ports_list_tmp: []
 
-- name: "al_bsd_ports_set_flavor: Create list with flavors"
+- name: "Al_bsd_ports_set_flavor: Create list with flavors"
   ansible.builtin.set_fact:
     al_bsd_ports_list_tmp: "{{ al_bsd_ports_list_tmp + [_item] }}"
-  loop: "{{ al_bsd_ports_list|product(al_bsd_ports_flavors)|list }}"
+  loop: "{{ al_bsd_ports_list | product(al_bsd_ports_flavors) | list }}"
   vars:
-    _flavor_prefix: "{{ item.1|regex_replace('^([a-zA-Z_]*)([0-9]*)$', '\\1-') }}"
+    _flavor_prefix: "{{ item.1 | regex_replace('^([a-zA-Z_]*)([0-9]*)$', '\\1-') }}"
     _regex: '(.*)/({{ _flavor_prefix }})?(.*)'
     _replace: '{{ item.1 }}-\3'
-    _item: "{{ item.0|regex_replace(_regex, _replace) }}"
+    _item: "{{ item.0 | regex_replace(_regex, _replace) }}"
 
-- name: "al_bsd_ports_set_flavor: Set result"
+- name: "Al_bsd_ports_set_flavor: Set result"
   ansible.builtin.set_fact:
     al_bsd_ports_list: "{{ al_bsd_ports_list_tmp }}"
 
-- name: "al_bsd_ports_set_flavor: Debug result"
+- name: "Al_bsd_ports_set_flavor: Debug result"
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   vars:
     msg: |-
       al_bsd_ports_list:
-        {{ al_bsd_ports_list|to_nice_yaml(indent=2)|indent(2) }}
-  when: al_debug|bool
+        {{ al_bsd_ports_list | to_nice_yaml(indent=2) | indent(2) }}
+  when: al_debug | bool
 
 # EOF
 ...

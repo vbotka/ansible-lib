@@ -1,5 +1,5 @@
 ---
-# All rights reserved (c) 2020-2021, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,7 +21,8 @@
 # https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_playbook_dir.yml
 
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars/defaults"
+
+- name: "Al_include_os_vars_playbook_dir: vars from {{ playbook_dir ~ '/vars/defaults' }}"
   ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
@@ -34,8 +35,8 @@
         - defaults.yml
       paths: "{{ playbook_dir }}/vars/defaults"
       skip: true
-# register: result
-  when: _file|length > 0
+  # register: result
+  when: _file | length > 0
 
 # - name: "al_include_os_vars_playbook_dir: Debug result"
 #   ansible.builtin.debug:
@@ -43,7 +44,8 @@
 #   when: al_debug|bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "al_include_os_vars_playbook_dir: Vars from {{ playbook_dir }}/vars"
+
+- name: "Al_include_os_vars_playbook_dir: vars from {{ playbook_dir ~ '/vars' }}"
   ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
@@ -56,13 +58,13 @@
         - defaults.yml
       paths: "{{ playbook_dir }}/vars"
       skip: true
-# register: result
-  when: _file|length > 0
+  # register: result
+  when: _file | length > 0
 
 # - name: "al_include_os_vars_playbook_dir: Debug result"
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug|bool
+#   when: al_debug | bool
 
 # EOF
 ...
