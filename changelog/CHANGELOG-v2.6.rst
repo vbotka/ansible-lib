@@ -5,6 +5,14 @@ vbotka.ansible_lib 2.6 Release Notes
 .. contents:: Topics
 
 
+2.6.2
+=====
+
+Release Summary
+---------------
+Update README.
+
+
 2.6.1
 =====
 
