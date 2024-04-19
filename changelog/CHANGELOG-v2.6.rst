@@ -12,6 +12,13 @@ Release Summary
 ---------------
 Update README.
 
+Major Changes
+-------------
+
+Minor Changes
+-------------
+* Fix README tag badge.
+
 
 2.6.1
 =====
