@@ -4,7 +4,8 @@ quiet: false
 parseable: true
 use_default_rules: true
 skip_list:
-  - schema
+  - schema[meta]
+
 # rulesdir:
 #   - $HOME/.ansible/ansible-lint-rules
 
