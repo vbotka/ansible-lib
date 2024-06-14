@@ -21,8 +21,8 @@ Minor Changes
 * Update README. Fix README tag badge.
 * Use default rules in local ansible-lint config.
 * Update skip_list in local ansible-lint config.
-* Update al_pws_user_host. Add sanity dependencies. Move defaults to
-  defaults/main/al_pws.yml
+* Update al_pws_user_host; add sanity dependencies; move defaults to
+  defaults/main/al_pws.yml; update al_pws_query_result
 * defaults moved from main.yml to separate files in main.
 
 

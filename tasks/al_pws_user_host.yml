@@ -197,7 +197,7 @@
 #     al_pws_query: "{{ al_pws_query | d([]) }}"
 #   no_log: true  # no-log-password password should not be logged.
 
-- name: "Al_pws_user_host: Debug."
+- name: "Al_pws_user_host: Debug al_pws_debug={{ al_pws_debug }}"
   when: al_pws_debug | bool
   vars:
     msg: |-
@@ -286,7 +286,7 @@
     - item.shell | d('') is not search('nologin')
     - item.state | d('present') == 'present'
 
-- name: "Al_pws_user_host: Debug my_queries 1."
+- name: "Al_pws_user_host: Debug my_queries 1 al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_queries | length: {{ my_queries | length }}
@@ -296,7 +296,7 @@
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug | bool
 
-- name: "Al_pws_user_host: Debug my_queries 2."
+- name: "Al_pws_user_host: Debug my_queries 2 al_pws_debug={{ al_pws_debug }}"
   ansible.builtin.debug:
     msg: "{{ {item.key: item.value} }}"
   loop: "{{ my_queries | dict2items }}"
@@ -319,7 +319,7 @@
   vars:
     my_userpass: "{{ lookup('community.general.passwordstore', item.value) }}"
 
-- name: "Al_pws_user_host: Debug my_userpass_dict"
+- name: "Al_pws_user_host: Debug my_userpass_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_userpass_dict:
@@ -349,7 +349,7 @@
                  ternary( 65534 | random(seed=(item.name ~ inventory_hostname)) | string,
                           65534 | random | string) }}"
 
-- name: "Al_pws_user_host: Debug my_salt_dict"
+- name: "Al_pws_user_host: Debug my_salt_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_salt_dict:
@@ -375,7 +375,7 @@
     my_password: "{{ item.value | password_hash('sha512', my_salt_dict[item.key]) }}"
   no_log: true  # no-log-password password should not be logged.
 
-- name: "Al_pws_user_host: Debug my_password_dict"
+- name: "Al_pws_user_host: Debug my_password_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_password_dict:
@@ -392,18 +392,19 @@
 
 - name: "Al_pws_user_host: Add attributes userpass and password."
   ansible.builtin.set_fact:
-    al_pws_query_result: "{{ al_pws_query_result +
-                             [item | combine({'userpass': my_userpass_dict[item.name]}) |
-                                     combine({'password': my_password_dict[item.name]})] }}"
+    al_pws_query_result: "{{ al_pws_query_result + [item | combine(_dict)] }}"
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
+  vars:
+    _dict: "{{ dict([('userpass', my_userpass_dict[item.name]),
+                     ('password', my_password_dict[item.name])]) }}"
   when:
     - not item.disabled_password | d(false)
     - item.shell | d('') is not search('nologin')
     - item.state | d('present') is match('present')
 
-- name: "Al_pws_user_host: Debug al_pws_query_result."
+- name: "Al_pws_user_host: Debug al_pws_query_result al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       al_pws_query_result:
