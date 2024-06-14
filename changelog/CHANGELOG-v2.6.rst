@@ -10,14 +10,15 @@ vbotka.ansible_lib 2.6 Release Notes
 
 Release Summary
 ---------------
-Update README.
+Feature and bugfix udpate.
 
 Major Changes
 -------------
+* Supported 13.3, 14.0, and 14.1
 
 Minor Changes
 -------------
-* Fix README tag badge.
+* Update README. Fix README tag badge.
 * Use default rules in local ansible-lint config.
 * Update skip_list in local ansible-lint config.
 
