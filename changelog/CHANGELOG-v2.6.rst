@@ -10,7 +10,7 @@ vbotka.ansible_lib 2.6 Release Notes
 
 Release Summary
 ---------------
-Feature and bugfix udpate.
+Feature and bugfix update.
 
 Major Changes
 -------------
@@ -23,6 +23,7 @@ Minor Changes
 * Update skip_list in local ansible-lint config.
 * Update al_pws_user_host. Add sanity dependencies. Move defaults to
   defaults/main/al_pws.yml
+* defaults moved from main.yml to separate files in main.
 
 
 2.6.1
