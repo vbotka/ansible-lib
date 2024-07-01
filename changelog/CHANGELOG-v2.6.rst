@@ -10,7 +10,7 @@ vbotka.ansible_lib 2.6 Release Notes
 
 Release Summary
 ---------------
-Feature and bugfix update.
+Ansible 2.17 feature and bugfix update.
 
 Major Changes
 -------------
