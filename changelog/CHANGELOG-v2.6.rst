@@ -14,7 +14,8 @@ Ansible 2.17 feature and bugfix update.
 
 Major Changes
 -------------
-* Supported 13.3, 14.0, and 14.1
+* Supported add Freebsd 13.3, 14.0, and 14.1
+* Supported add Ubuntu 24.04 Noble
 
 Minor Changes
 -------------
