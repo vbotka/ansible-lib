@@ -58,13 +58,12 @@
 #   {{ al_find_newer_maxtime }}
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_find_newer.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_find_newer.yml
 
 - name: "Al_find_newer: Default variables."
   ansible.builtin.set_fact:
     al_find_newer_timestamp: "{{ al_find_newer_timestamp | d('/var/tmp/al-newer-timestamp') }}"
     al_find_newer_time: "{{ al_find_newer_time | d('mtime') }}"
-    al_debug: "{{ al_debug | d(false) }}"
 
 - name: "Al_find_newer: Sanity al_find_newer_dir."
   ansible.builtin.fail:
@@ -85,7 +84,7 @@
       cat {{ al_find_newer_timestamp }} ||
       echo 0'
 
-- name: "Al_find_newer: Debug my_timestamp"
+- name: "Al_find_newer: Debug my_timestamp al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: my_timestamp
   when: al_debug | bool
@@ -95,7 +94,7 @@
     paths: "{{ al_find_newer_dir }}"
   register: my_result
 
-- name: "Al_find_newer: Debug my_result"
+- name: "Al_find_newer: Debug my_result al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: my_result
   when: al_debug | bool
@@ -103,15 +102,15 @@
 - name: "Al_find_newer: Select newer files. Set default time 0"
   ansible.builtin.set_fact:
     al_find_newer_maxtime: 0
-    al_find_newer_list: "{{ my_result.files | json_query(query) }}"
+    al_find_newer_list: "{{ my_result.files | json_query(jquery) }}"
   vars:
-    query: "[?{{ al_find_newer_time }} > to_number('{{ my_timestamp }}')].path"
+    jquery: "[?{{ al_find_newer_time }} > to_number('{{ my_timestamp }}')].path"
 
 - name: "Al_find_newer: Find newest file by {{ al_find_newer_time }}"
   ansible.builtin.set_fact:
-    al_find_newer_maxtime: "{{ my_result.files | json_query(query) | max }}"
+    al_find_newer_maxtime: "{{ my_result.files | json_query(jquery) | max }}"
   vars:
-    query: "[].{{ al_find_newer_time }}"
+    jquery: "[].{{ al_find_newer_time }}"
   when: my_result.files | length > 0
 
 # EOF

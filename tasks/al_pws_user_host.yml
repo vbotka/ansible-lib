@@ -22,8 +22,7 @@
 #   al_pws_hostname_var ... Name of the variable with the name of the host [6]
 #                           (default: inventory_hostname)
 #   al_pws_debug .......... Display debug info.
-#                           WARNING: userpass will be displayed
-#                           (default: false)
+#                           WARNING: userpass will be displayed (default: false)
 #
 # Output:
 #
@@ -33,7 +32,7 @@
 # Notes:
 #
 #   [1] See parameters of Ansible lookup plugin "passwordstore". Optionally
-#       set custom defaults. See first task of the playbook "Default variables".
+#       set custom defaults. See defaults/main/al_pws.yml.
 #   [2] If "usrpass" is omitted in the input "usrpass" will be retrieved
 #       from passwordstore and added to the dictionary al_pws_query.
 #   [3] A new "usrpass" will be created if it does not exist in
@@ -75,12 +74,10 @@
 #
 # Example 2: Update, or create userpass provided by the variable
 #
-
 #   Update or create, if it does not exist, userpass for users in the
 #   dictionary al_pws_query at all hosts in the group my_domain. The
 #   userpass is provided by the variable. Include tasks to update the
 #   passwords at hosts.
-
 #
 #   shell> cat playbook.yml
 #   - hosts: my_domain
@@ -178,54 +175,79 @@
 #      https://www.krenger.ch/blog/gopass-gpg-decryption-failed-no-secret-key/
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_pws_user_host.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_pws_user_host.yml
 
-- name: "Al_pws_user_host: Default variables."
-  ansible.builtin.set_fact:
-    al_pws_debug: "{{ al_pws_debug | d(false) }}"
-    al_pws_backup: "{{ al_pws_backup | d(false) }}"
-    al_pws_create: "{{ al_pws_create | d(false) }}"
-    al_pws_length: "{{ al_pws_length | d(16) }}"
-    al_pws_nosymbols: "{{ al_pws_nosymbols | d(false) }}"
-    al_pws_overwrite: "{{ al_pws_overwrite | d(false) }}"
-    al_pws_passwordstore: "{{ al_pws_passwordstore | d('~/.password-store') }}"
-    al_pws_returnall: "{{ al_pws_returnall | d(false) }}"
-    al_pws_subkey: "{{ al_pws_subkey | d('password') }}"
-    al_pws_idempotent_password_hash: "{{ al_pws_idempotent_password_hash | d(true) }}"
-    al_pws_hostname_var: "{{ al_pws_hostname_var | d('inventory_hostname') }}"
-    al_pws_query: "{{ al_pws_query | d([]) }}"
-  no_log: true  # no-log-password password should not be logged.
+# defaults moved to defaults/main/al_pws.yml
+# - name: "Al_pws_user_host: Default variables."
+#   ansible.builtin.set_fact:
+#     al_pws_debug: "{{ al_pws_debug | d(false) }}"
+#     al_pws_sanity_quiet: "{{ al_pws_sanity_quiet | bool }}"
+#     al_pws_backup: "{{ al_pws_backup | d(false) }}"
+#     al_pws_create: "{{ al_pws_create | d(false) }}"
+#     al_pws_length: "{{ al_pws_length | d(16) }}"
+#     al_pws_nosymbols: "{{ al_pws_nosymbols | d(false) }}"
+#     al_pws_overwrite: "{{ al_pws_overwrite | d(false) }}"
+#     al_pws_passwordstore: "{{ al_pws_passwordstore | d('~/.password-store') }}"
+#     al_pws_returnall: "{{ al_pws_returnall | d(false) }}"
+#     al_pws_subkey: "{{ al_pws_subkey | d('password') }}"
+#     al_pws_idempotent_password_hash: "{{ al_pws_idempotent_password_hash | d(true) }}"
+#     al_pws_hostname_var: "{{ al_pws_hostname_var | d('inventory_hostname') }}"
+#     al_pws_query: "{{ al_pws_query | d([]) }}"
+#   no_log: true  # no-log-password password should not be logged.
 
-- name: "Al_pws_user_host: Debug."
+- name: "Al_pws_user_host: Debug al_pws_debug={{ al_pws_debug }}"
+  when: al_pws_debug | bool
   vars:
     msg: |-
       al_pws_backup: {{ al_pws_backup }}
       al_pws_create: {{ al_pws_create }}
+      al_pws_hostname_var: {{ al_pws_hostname_var }}
+      al_pws_idempotent_password_hash: {{ al_pws_idempotent_password_hash }}
       al_pws_length: {{ al_pws_length }}
       al_pws_nosymbols: {{ al_pws_nosymbols }}
       al_pws_overwrite: {{ al_pws_overwrite }}
       al_pws_passwordstore: {{ al_pws_passwordstore }}
       al_pws_returnall: {{ al_pws_returnall }}
+      al_pws_sanity_quiet: {{ al_pws_sanity_quiet }}
       al_pws_subkey: {{ al_pws_subkey }}
-      al_pws_idempotent_password_hash: {{ al_pws_idempotent_password_hash }}
-      al_pws_hostname_var: {{ al_pws_hostname_var }}
       al_pws_query:
         {{ al_pws_query | to_nice_yaml(indent=2) | indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_pws_debug | bool
 
 # Sanity  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+- name: Sanity dependencies
+  delegate_to: localhost
+  run_once: true
+  block:
+
+    - name: "Al_pws_user_host: Sanity dependencies collect."
+      community.general.python_requirements_info:
+        dependencies:
+          - passlib
+      register: out
+
+    - name: "Al_pws_user_host: Sanity dependencies assert."
+      ansible.builtin.assert:
+        that: out.not_found|length == 0
+        success_msg: "[OK]  All dependencies installed."
+        fail_msg: "[ERR] dependencies not installed: {{ out.not_found }}"
+        quiet: "{{ al_pws_sanity_quiet | bool }}"
+
 - name: "Al_pws_user_host: Sanity of al_pws_query. Empty."
-  ansible.builtin.fail:
-    msg: "[ERR] List of queries al_pws_query is empty."
-  when: al_pws_query | length == 0
+  ansible.builtin.assert:
+    that: al_pws_query|length > 0
+    success_msg: "[OK]  List of queries al_pws_query not empty."
+    fail_msg: "[ERR] List of queries al_pws_query is empty."
+    quiet: "{{ al_pws_sanity_quiet | bool }}"
 
 - name: "Al_pws_user_host: Sanity of al_pws_query. Attribute name is mandatory."
-  ansible.builtin.fail:
-    msg: "[ERR] Attribute name is mandatory."
-  when: number_of_names != number_of_items
+  ansible.builtin.assert:
+    that: number_of_names == number_of_items
+    success_msg: "[OK]  Attribute name in all items."
+    fail_msg: "[ERR] Attribute name is mandatory."
+    quiet: "{{ al_pws_sanity_quiet | bool }}"
   vars:
     number_of_names: "{{ al_pws_query | json_query('[].name') | length }}"  # noqa: jinja[invalid]
     number_of_items: "{{ al_pws_query | length }}"
@@ -262,7 +284,7 @@
     - item.shell | d('') is not search('nologin')
     - item.state | d('present') == 'present'
 
-- name: "Al_pws_user_host: Debug my_queries 1."
+- name: "Al_pws_user_host: Debug my_queries 1 al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_queries | length: {{ my_queries | length }}
@@ -272,7 +294,7 @@
     msg: "{{ '{}'.format(msg) }}"
   when: al_pws_debug | bool
 
-- name: "Al_pws_user_host: Debug my_queries 2."
+- name: "Al_pws_user_host: Debug my_queries 2 al_pws_debug={{ al_pws_debug }}"
   ansible.builtin.debug:
     msg: "{{ {item.key: item.value} }}"
   loop: "{{ my_queries | dict2items }}"
@@ -295,7 +317,7 @@
   vars:
     my_userpass: "{{ lookup('community.general.passwordstore', item.value) }}"
 
-- name: "Al_pws_user_host: Debug my_userpass_dict"
+- name: "Al_pws_user_host: Debug my_userpass_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_userpass_dict:
@@ -325,7 +347,7 @@
                  ternary( 65534 | random(seed=(item.name ~ inventory_hostname)) | string,
                           65534 | random | string) }}"
 
-- name: "Al_pws_user_host: Debug my_salt_dict"
+- name: "Al_pws_user_host: Debug my_salt_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_salt_dict:
@@ -351,7 +373,7 @@
     my_password: "{{ item.value | password_hash('sha512', my_salt_dict[item.key]) }}"
   no_log: true  # no-log-password password should not be logged.
 
-- name: "Al_pws_user_host: Debug my_password_dict"
+- name: "Al_pws_user_host: Debug my_password_dict al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       my_password_dict:
@@ -368,18 +390,19 @@
 
 - name: "Al_pws_user_host: Add attributes userpass and password."
   ansible.builtin.set_fact:
-    al_pws_query_result: "{{ al_pws_query_result +
-                             [item | combine({'userpass': my_userpass_dict[item.name]}) |
-                                     combine({'password': my_password_dict[item.name]})] }}"
+    al_pws_query_result: "{{ al_pws_query_result + [item | combine(_dict)] }}"
   loop: "{{ al_pws_query }}"
   loop_control:
     label: "{{ item.name }}"
+  vars:
+    _dict: "{{ dict([('userpass', my_userpass_dict[item.name]),
+                     ('password', my_password_dict[item.name])]) }}"
   when:
     - not item.disabled_password | d(false)
     - item.shell | d('') is not search('nologin')
     - item.state | d('present') is match('present')
 
-- name: "Al_pws_user_host: Debug al_pws_query_result."
+- name: "Al_pws_user_host: Debug al_pws_query_result al_pws_debug={{ al_pws_debug }}"
   vars:
     msg: |-
       al_pws_query_result:

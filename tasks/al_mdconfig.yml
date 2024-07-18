@@ -46,14 +46,13 @@
 #       unit: '1'
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_mdconfig.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_mdconfig.yml
 
 - name: "Al_mdconfig: Default variables."
   ansible.builtin.set_fact:
     al_mdconfig_state: "{{ al_mdconfig_state | d('present') }}"
-    al_debug: "{{ al_debug | d(false) }}"
 
-- name: "Al_mdconfig: Debug."
+- name: "Al_mdconfig: Debug al_debug={{ al_debug }}"
   vars:
     msg: |-
       al_mdconfig_file: {{ al_mdconfig_file }}
@@ -70,7 +69,7 @@
   register: result
   changed_when: false
 
-- name: "Al_mdconfig: Debug memory disks"
+- name: "Al_mdconfig: Debug memory disks al_debug={{ al_debug }}"
   ansible.builtin.debug:
     msg: "{{ result.stdout_lines }}"
   when:
@@ -94,7 +93,7 @@
     array: "{{ al_item.split('\t') | map('trim') | list }}"  # noqa no-tabs
     unit: "{{ array[0][2:] }}"
 
-- name: "Al_mdconfig: Debug memory disks"
+- name: "Al_mdconfig: Debug memory disks al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_mdconfig_devs
   when: al_debug | bool
@@ -118,7 +117,7 @@
         al_mdconfig_devs: "{{ al_mdconfig_devs |
                               combine({al_mdconfig_file: {'node': 'vnode',
                                                           'unit': result.stdout[2:]}}) }}"
-      when: result.stdout|default('') | length > 0
+      when: result.stdout | d('') | length > 0
 
   rescue:
 

@@ -28,11 +28,11 @@
 #         name: vbotka.ansible_lib
 #         tasks_from: al_include_confd_vars_list.yml
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_confd_vars_list.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_include_confd_vars_list.yml
 
 # Debug and Test input variable al_include_confd_dir - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_include_confd_vars_list: Debug"
+- name: "Al_include_confd_vars_list: Debug al_debug={{ al_debug }}"
   vars:
     msg: |-
       al_include_confd_dir: {{ al_include_confd_dir | d('UNDEFINED') }}
@@ -73,7 +73,7 @@
   ansible.builtin.set_fact:
     al_local_path_list: "{{ result | json_query('files[].path') }}"
 
-- name: "Al_include_confd_vars_list: Debug list of configuration files"
+- name: "Al_include_confd_vars_list: Debug list of configuration files al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_local_path_list
   when: al_debug | bool
@@ -92,7 +92,7 @@
   ansible.builtin.set_fact:
     al_local_path_list: "{{ al_local_path_list + result | json_query('files[].path') }}"
 
-- name: "Al_include_confd_vars_list: Debug list of configuration paths"
+- name: "Al_include_confd_vars_list: Debug list of configuration paths al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_local_path_list
   when: al_debug | bool
@@ -118,7 +118,7 @@
   loop: "{{ al_local_path_list }}"
   when: al_include_confd_vars_list_type == 'fname'
 
-- name: "Al_include_confd_vars_list: Debug al_include_confd_vars_list"
+- name: "Al_include_confd_vars_list: Debug al_include_confd_vars_list al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_include_confd_vars_list
   when: al_debug | bool

@@ -1,6 +1,8 @@
 # ansible_lib
 
-[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)[![Build Status](https://app.travis-ci.com/vbotka/ansible-lib.svg?branch=master)](https://app.travis-ci.com/vbotka/ansible-lib)
+[![quality](https://img.shields.io/ansible/quality/39556)](https://galaxy.ansible.com/vbotka/ansible_lib)
+[![Build Status](https://app.travis-ci.com/vbotka/ansible-lib.svg?branch=master)](https://app.travis-ci.com/vbotka/ansible-lib)
+[![GitHub tag](https://img.shields.io/github/v/tag/vbotka/ansible-lib)](https://github.com/vbotka/ansible-lib/tags)
 
 [Ansible role.](https://galaxy.ansible.com/vbotka/ansible_lib/) Library of Ansible tasks.
 
@@ -29,6 +31,17 @@ See the comments in the tasks.
 ### Collections
 
 * community.general
+
+
+## Ansible lint
+
+Use the configuration file *.ansible-lint.local* when running
+*ansible-lint*. Some rules might be disabled and some warnings might
+be ignored. See the notes in the configuration file.
+
+```bash
+shell> ansible-lint -c .ansible-lint.local
+```
 
 
 ## License

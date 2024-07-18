@@ -36,16 +36,15 @@
 #           var: inventory_hostname
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_hosts_reachable.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_hosts_reachable.yml
 
 - name: "Al_hosts_reachable: Default variables."
   ansible.builtin.set_fact:
     al_hosts_reachable_group: "{{ al_hosts_reachable_group | d('al_reachable') }}"
     al_hosts_unreachable_group: "{{ al_hosts_unreachable_group | d('al_unreachable') }}"
     al_hosts_connection_timeout: "{{ al_hosts_connection_timeout | d(10) }}"
-    al_debug: "{{ al_debug | d(false) }}"
 
-- name: "Al_hosts_reachable: Debug."
+- name: "Al_hosts_reachable: Debug al_debug={{ al_debug }}"
   vars:
     msg: |-
       al_hosts_reachable_group: {{ al_hosts_reachable_group }}
@@ -64,7 +63,7 @@
 
   rescue:
 
-    - name: "Al_hosts_reachable: Rescue debug."
+    - name: "Al_hosts_reachable: Rescue debug al_debug={{ al_debug }}"
       ansible.builtin.debug:
         msg: "[ERR] Can not connect to {{ inventory_hostname }}"
       when: al_debug | bool
@@ -79,9 +78,9 @@
     - name: "Al_hosts_reachable: Rescue meta end host."
       ansible.builtin.meta: end_host
 
-- name: "Al_hosts_reachable: Debug connected."
+- name: "Al_hosts_reachable: Debug connected al_debug={{ al_debug }}"
   ansible.builtin.debug:
-    msg: "[OK] Connnected to {{ inventory_hostname }}"
+    msg: "[OK]  Connnected to {{ inventory_hostname }}"
   when: al_debug | bool
 
 - name: "Al_hosts_reachable: Set variable my_host_reachable True."
@@ -123,7 +122,7 @@
       ansible.builtin.debug:
         msg: "{{ '{}'.format(msg) }}"
       when:
-        - al_debug|bool
+        - al_debug | bool
         - groups[al_hosts_unreachable_group] is defined
 
 # EOF
