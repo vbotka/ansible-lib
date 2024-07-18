@@ -11,7 +11,7 @@
     file: "{{ item }}"
     name: al_local_var
 
-- name: "Al_include_confd_vars_list_fname: Debug"
+- name: "Al_include_confd_vars_list_fname: Debug al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_local_var
   when: al_debug | bool

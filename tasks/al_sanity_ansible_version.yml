@@ -44,7 +44,7 @@
 #         tasks_from: al_sanity_ansible_version
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_sanity_ansible_version.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_sanity_ansible_version.yml
 
 - name: "Al_sanity_ansible_version: Fail when galaxy_info not defined."
   ansible.builtin.fail:
@@ -63,7 +63,7 @@
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_sanity_ansible_version: Debug. Print variables."
+- name: "Al_sanity_ansible_version: Debug. Print variables al_debug={{ al_debug }}"
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -126,7 +126,7 @@
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_sanity_ansible_version: Debug. Test supported Ansible version passed."
+- name: "Al_sanity_ansible_version: Debug. Test supported Ansible version passed al_debug={{ al_debug }}"
   ansible.builtin.debug:
     msg: >-
       Ansible version {{ ansible_version.full }}

@@ -32,8 +32,8 @@
 #   shell> tree al_vars/
 #   al_vars/
 #   ├── var1
-#   │   ├── A1
-#   │   └── B1
+#   │   ├── A1
+#   │   └── B1
 #   └── var2
 #       ├── A2
 #       └── B2
@@ -78,10 +78,10 @@
 #         - item2
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_dir_vars.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_include_dir_vars.yml
 
 # Debug and Test input variable - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-- name: "Al_include_dir_vars: Debug"
+- name: "Al_include_dir_vars: Debug al_debug={{ al_debug }}"
   vars:
     msg: |-
       al_include_dir_vars_dir {{ al_include_dir_vars_dir | d('UNDEFINED') }}
@@ -102,7 +102,7 @@
   delegate_to: localhost
   register: result
 
-- name: "Al_include_dir_vars: Debug list of directories"
+- name: "Al_include_dir_vars: Debug list of directories al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: result
   when: al_debug | bool
@@ -113,7 +113,7 @@
                                   map(attribute='path') |
                                   map('basename') | list }}"
 
-- name: "Al_include_dir_vars: Debug list of directories"
+- name: "Al_include_dir_vars: Debug list of directories al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_include_dir_vars_list
   when: al_debug | bool
@@ -128,7 +128,7 @@
     fileglob: "{{ al_include_dir_vars_dir }}/{{ item }}/*"
     files: "{{ query('fileglob', fileglob) | map('basename') | list }}"
 
-- name: "Al_include_dir_vars: Debug lists of files"
+- name: "Al_include_dir_vars: Debug lists of files al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_include_dir_vars_keys
   when: al_debug | bool
@@ -144,7 +144,7 @@
     value: "{{ lookup('file', path) | from_yaml }}"
   when: al_include_dir_vars_keys is defined
 
-- name: "Al_include_dir_vars: Debug content of files"
+- name: "Al_include_dir_vars: Debug content of files al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_include_dir_vars_values
   when: al_debug | bool
@@ -158,7 +158,7 @@
     label: "{{ item.0 }}"
   when: al_include_dir_vars_values is defined
 
-- name: "Al_include_dir_vars: Debug dictionary al_vars"
+- name: "Al_include_dir_vars: Debug dictionary al_vars al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_vars
   when: al_debug | bool

@@ -99,7 +99,7 @@
 #   * Fix failed service onestatus reported ignored, should be reported ok
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_bsd_service_facts.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_bsd_service_facts.yml
 
 - name: "Al_bsd_service_facts: Create list al_bsd_service_paths"
   when: al_bsd_service_paths | d([]) | length == 0
@@ -116,7 +116,7 @@
       ansible.builtin.set_fact:
         al_bsd_service_paths: "{{ rc_scripts.files | map(attribute='path') | list }}"
 
-- name: "Al_bsd_service_facts: Debug al_bsd_service_paths"
+- name: "Al_bsd_service_facts: Debug al_bsd_service_paths al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: al_bsd_service_paths | sort
   when: al_debug | bool
@@ -129,10 +129,10 @@
   ignore_errors: true
   changed_when: false
 
-- name: "Al_bsd_service_facts: Debug service_status"
+- name: "Al_bsd_service_facts: Debug service_status al_debug={{ al_debug }}"
   ansible.builtin.debug:
     msg: "{{ service_status }}"
-  when: al_debug| bool
+  when: al_debug | bool
 
 - name: "Al_bsd_service_facts: Set empty al_ansible_facts_services"
   ansible.builtin.set_fact:

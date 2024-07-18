@@ -31,11 +31,11 @@
 #   3) Variables in vars/main.yml will be overwritten by the file from
 #      the list "with_first_found".
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_include_os_vars_path.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_include_os_vars_path.yml
 
 # Debug and Test input variable al_os_vars_path - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_include_os_vars_path: Debug"
+- name: "Al_include_os_vars_path: Debug al_debug={{ al_debug }}"
   vars:
     msg: |-
       al_os_vars_path: {{ al_os_vars_path | d('UNDEFINED') }}
@@ -54,19 +54,20 @@
   ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    _files:
+      - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      - default.yml
+      - defaults.yml
     params:
-      files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - default.yml
-        - defaults.yml
+      files: "{{ _files | unique }}"
       paths: "{{ al_os_vars_path }}/vars/defaults"
       skip: true
   register: result
   when: _file | length > 0
 
-- name: "Al_include_os_vars_path: Debug result"
+- name: "Al_include_os_vars_path: Debug result al_debug={{ al_debug }}"
   ansible.builtin.debug:
     var: result
   when: al_debug | bool
@@ -77,19 +78,20 @@
   ansible.builtin.include_vars: "{{ _file }}"
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
+    _files:
+      - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      - default.yml
+      - defaults.yml
     params:
-      files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - default.yml
-        - defaults.yml
+      files: "{{ _files | unique }}"
       paths: "{{ al_os_vars_path }}/vars"
       skip: true
   # register: result
   when: _file | length > 0
 
-# - name: "al_include_os_vars_path: Debug result"
+# - name: "al_include_os_vars_path: Debug result al_debug={{ al_debug }}"
 #   ansible.builtin.debug:
 #     var: result
 #   when: al_debug | bool

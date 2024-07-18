@@ -26,6 +26,10 @@ Minor Changes
   defaults/main/al_pws.yml; update al_pws_query_result
 * defaults moved from main.yml to separate files in main.
 
+Bugfixes
+--------
+* Make unique list of files for the lookup first_found
+
 
 2.6.1
 =====

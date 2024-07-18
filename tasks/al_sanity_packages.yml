@@ -67,16 +67,17 @@
 #       - debug:
 #           msg: "Found {{ item.0 }}-{{ item.1 }}"
 #         with_together:
-#           - "{{ pkg_list|
-#                 map('regex_replace','^(.*)-(.*)$', '\\1')|list }}"
-#           - "{{ pkg_list|
-#                 map('regex_replace','^(.*)-(.*)$', '\\2')|list }}"
-#         when: pkgv|map('regex_search', '^' ~ item.1)|list|length > 0
+#           - "{{ pkg_list |
+#                 map('regex_replace','^(.*)-(.*)$', '\\1') | list }}"
+#           - "{{ pkg_list |
+#                 map('regex_replace','^(.*)-(.*)$', '\\2') | list }}"
+#         when: pkgv|map('regex_search', '^' ~ item.1)|list | length > 0
 #         vars:
-#           pkgn: "{{ ansible_facts.packages[item.0]|default([]) }}"
-#           pkgv: "{{ pkgn|map(attribute='version')|list }}"
+#           pkgn: "{{ ansible_facts.packages[item.0] | d([]) }}"
+#           pkgv: "{{ pkgn|map(attribute='version') | list }}"
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# https://github.com/vbotka/ansible-lib/tasks/al_sanity_packages.yml
 
 - name: "Al_sanity_packages: Fail when al_sanity_role_name not defined."
   ansible.builtin.fail:
@@ -96,7 +97,7 @@
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_sanity_packages: Debug. Print variables."
+- name: "Al_sanity_packages: Debug. Print variables.  al_debug={{ al_debug }}"
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -108,11 +109,11 @@
       al_sanity_role_name: {{ al_sanity_role_name }}
       al_sanity_packages_gather_subset: {{ al_sanity_packages_gather_subset }}
       al_sanity_packages_required:
-        {{ al_sanity_packages_required|to_yaml(indent=2)|indent(2) }}
+        {{ al_sanity_packages_required | to_yaml(indent=2) | indent(2) }}
       (my_sanity_packages_required):
-        {{ al_sanity_packages_required[ansible_distribution][ansible_distribution_release]|
-           d(al_sanity_packages_required[ansible_distribution]['default'])|
-           to_yaml(indent=2)|indent(2) }}
+        {{ al_sanity_packages_required[ansible_distribution][ansible_distribution_release] |
+           d(al_sanity_packages_required[ansible_distribution]['default']) |
+           to_yaml(indent=2) | indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug | bool
@@ -135,14 +136,14 @@
   vars:
     _item: "{{ [item] | flatten }}"
 
-- name: "Al_sanity_packages: Debug. Display my_installed_packages"
+- name: "Al_sanity_packages: Debug. Display my_installed_packages al_debug={{ al_debug }}"
   ansible.builtin.debug:
     msg: "Installed packages: {{ my_installed_packages }}"
   when: al_debug | bool
 
-- name: "Al_sanity_packages: Debug. Display my_not_installed_packages"
+- name: "Al_sanity_packages: Debug. Display my_not_installed_packages al_debug={{ al_debug }}"
   ansible.builtin.debug:
-    msg: "Not installed packages: {{ my_not_installed_packages | default([]) }}"
+    msg: "Not installed packages: {{ my_not_installed_packages | d([]) }}"
   when: al_debug | bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -156,7 +157,7 @@
 
 # Debug. Passed - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-- name: "Al_sanity_packages: Debug. Test required packages passed."
+- name: "Al_sanity_packages: Debug. Test required packages passed. al_debug={{ al_debug }}"
   ansible.builtin.debug:
     msg: All required packages installed in the role {{ al_sanity_role_name }}
   when: al_debug | bool

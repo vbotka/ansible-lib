@@ -74,12 +74,10 @@
 #
 # Example 2: Update, or create userpass provided by the variable
 #
-
 #   Update or create, if it does not exist, userpass for users in the
 #   dictionary al_pws_query at all hosts in the group my_domain. The
 #   userpass is provided by the variable. Include tasks to update the
 #   passwords at hosts.
-
 #
 #   shell> cat playbook.yml
 #   - hosts: my_domain
@@ -177,7 +175,7 @@
 #      https://www.krenger.ch/blog/gopass-gpg-decryption-failed-no-secret-key/
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# https://github.com/vbotka/ansible-lib/blob/master/tasks/al_pws_user_host.yml
+# https://github.com/vbotka/ansible-lib/tasks/al_pws_user_host.yml
 
 # defaults moved to defaults/main/al_pws.yml
 # - name: "Al_pws_user_host: Default variables."
