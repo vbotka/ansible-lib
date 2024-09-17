@@ -5,6 +5,25 @@ vbotka.ansible_lib 2.6 Release Notes
 .. contents:: Topics
 
 
+2.6.3
+=====
+
+Release Summary
+---------------
+Maintenance update.
+
+Major Changes
+-------------
+
+Minor Changes
+-------------
+* Add variable al_role_version
+* Update tasks/debug.yml
+
+Bugfixes
+--------
+
+
 2.6.2
 =====
 
