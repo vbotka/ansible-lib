@@ -4,6 +4,7 @@ vbotka.ansible_lib 2.6 Release Notes
 
 .. contents:: Topics
 # BEGIN Commits 2.6.3
+- Update
 - Format meta/main.yml
 - Start devel 2.6.3
 # END Commits 2.6.3
@@ -16,6 +17,10 @@ Major Changes
 -------------
 Minor Changes
 -------------
+- Update
+- Format meta/main.yml
+- Start devel 2.6.3
+
 Bugfixes
 --------
 Breaking Changes / Porting Guide
