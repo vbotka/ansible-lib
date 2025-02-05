@@ -74,16 +74,16 @@
 
 - name: "Al_sanity_platform: Get supported platforms."
   ansible.builtin.set_fact:
-    al_supported_platforms: "{{ galaxy_info.platforms | json_query(query) }}"
+    al_supported_platforms: "{{ galaxy_info.platforms | json_query(_query) }}"
   vars:
-    query: "[].name"
+    _query: "[].name"
 
 - name: "Al_sanity_platform: Get supported versions of {{ ansible_distribution }}."
   ansible.builtin.set_fact:
-    al_supported_versions: "{{ galaxy_info.platforms |
-                               json_query(query) | flatten | map('quote') | list }}"
+    al_supported_versions: "{{ galaxy_info.platforms | json_query(_query)
+                                                     | flatten | map('quote') | list }}"
   vars:
-    query: "[?name == '{{ ansible_distribution }}'].versions"
+    _query: "[?name == '{{ ansible_distribution }}'].versions"
 
 - name: "Al_sanity_platform: Set test variables."
   ansible.builtin.include_tasks:
