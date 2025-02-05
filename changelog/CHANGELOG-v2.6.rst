@@ -5,6 +5,21 @@ vbotka.ansible_lib 2.6 Release Notes
 .. contents:: Topics
 
 
+2.6.4
+=====
+
+Release Summary
+---------------
+Maintenance update.
+
+Major Changes
+-------------
+
+Minor Changes
+-------------
+* Fix reserved names.
+
+
 2.6.3
 =====
 
