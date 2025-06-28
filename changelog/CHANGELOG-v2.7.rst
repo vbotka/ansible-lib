@@ -19,6 +19,8 @@ Major Changes
 Minor Changes
 -------------
 * Add .gitignore to git.
+* Comments formatting unified.
+* Tasks formatting unified.
 
 Bugfixes
 --------
