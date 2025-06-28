@@ -1,11 +1,12 @@
 ---
-# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_os_vars_playbook_dir
 #
-# Description: Include OS specific variables from playbook_dir
+# Description: Include OS specific variables from playbook_dir.
 #
 # Input: none
 #
@@ -23,7 +24,7 @@
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_include_os_vars_playbook_dir: vars from {{ playbook_dir ~ '/vars/defaults' }}"
-  ansible.builtin.include_vars: "{{ _file }}"
+  when: _file | length > 0
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
     _files:
@@ -36,18 +37,18 @@
       files: "{{ _files | unique }}"
       paths: "{{ playbook_dir }}/vars/defaults"
       skip: true
-  # register: result
-  when: _file | length > 0
+# register: result
+  ansible.builtin.include_vars: "{{ _file }}"
 
 # - name: "al_include_os_vars_playbook_dir: Debug result al_debug={{ al_debug }}"
+#   when: al_debug | bool
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug | bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_include_os_vars_playbook_dir: vars from {{ playbook_dir ~ '/vars' }}"
-  ansible.builtin.include_vars: "{{ _file }}"
+  when: _file | length > 0
   vars:
     _file: "{{ lookup('ansible.builtin.first_found', params) }}"
     _files:
@@ -60,13 +61,13 @@
       files: "{{ _files | unique }}"
       paths: "{{ playbook_dir }}/vars"
       skip: true
-  # register: result
-  when: _file | length > 0
+# register: result
+  ansible.builtin.include_vars: "{{ _file }}"
 
 # - name: "al_include_os_vars_playbook_dir: Debug result al_debug={{ al_debug }}"
+#   when: al_debug | bool
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug | bool
 
 # EOF
 ...

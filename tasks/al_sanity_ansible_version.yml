@@ -1,16 +1,17 @@
 ---
 # All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_sanity_ansible_version
 #
-# Description: Test whether Ansible version is supported by the role or not.
+# Description:
 #
-#   Test whether the Ansible version is supported or not. By default
-#   print error message and fail if the version is not
-#   supported. Optionally end the host or print warning only and
-#   continue play. See the parameters below.
+#   Test whether Ansible version is supported by the role or not.  Test whether the
+#   Ansible version is supported or not. By default print error message and fail if the
+#   version is not supported. Optionally end the host or print warning only and continue
+#   play. See the parameters below.
 #
 # Input:
 #
@@ -24,10 +25,7 @@
 #
 # Output: None
 #
-# Example:
-#
-#   End host when version is not supported. Print warning. Print debug
-#   messages.
+# Example: End host when version is not supported. Print warning. Print debug messages.
 #
 #   vars:
 #     al_debug: True
@@ -47,14 +45,14 @@
 # https://github.com/vbotka/ansible-lib/tasks/al_sanity_ansible_version.yml
 
 - name: "Al_sanity_ansible_version: Fail when galaxy_info not defined."
+  when: galaxy_info is undefined
   ansible.builtin.fail:
     msg: "[ERR] Mandatory variable galaxy_info not defined."
-  when: galaxy_info is undefined
 
 - name: "Al_sanity_ansible_version: Fail when al_sanity_role_name not defined."
+  when: al_sanity_role_name is undefined
   ansible.builtin.fail:
     msg: "[ERR] Mandatory variable al_sanity_role_name not defined."
-  when: al_sanity_role_name is undefined
 
 - name: "Al_sanity_ansible_version: Get Ansible minimal version."
   ansible.builtin.set_fact:
@@ -64,6 +62,7 @@
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_sanity_ansible_version: Debug. Print variables al_debug={{ al_debug }}"
+  when: al_debug | bool
   vars:
     msg: |-
       ansible_distribution: {{ ansible_distribution }}
@@ -84,17 +83,16 @@
       al_sanity_ansible_version_min: {{ al_sanity_ansible_version_min }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_debug | bool
 
 # ERROR. Fail - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_sanity_ansible_version: Print ERROR version not supported. Fail."
-  ansible.builtin.fail:
-    msg: |
-      [ERR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}.
   when:
     - ansible_version.full is version(al_sanity_ansible_version_min, '<')
     - al_sanity_ansible_version_fail | bool
+  ansible.builtin.fail:
+    msg: |
+      [ERR] {{ ansible_version.full }} not supported by role {{ al_sanity_role_name }}.
 
 # ERROR. End host - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -116,22 +114,22 @@
 # WARNING - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_sanity_ansible_version: Print WARNING Ansible version not supported."
+  when:
+    - ansible_version.full is version(al_sanity_ansible_version_min, '<')
+    - al_sanity_ansible_version_warning | bool
   ansible.builtin.debug:
     msg: >-
       [WARNING] Ansible version {{ ansible_version.full }}
       is not supported by the role {{ al_sanity_role_name }}
-  when:
-    - ansible_version.full is version(al_sanity_ansible_version_min, '<')
-    - al_sanity_ansible_version_warning | bool
 
 # Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_sanity_ansible_version: Debug. Test supported Ansible version passed al_debug={{ al_debug }}"
+  when: al_debug | bool
   ansible.builtin.debug:
     msg: >-
       Ansible version {{ ansible_version.full }}
       is supported by the role {{ al_sanity_role_name }}
-  when: al_debug | bool
 
 # EOF
 ...

@@ -1,6 +1,7 @@
 ---
-# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 - name: "Al_include_confd_vars_list_plain: Include {{ item | basename }}"
   ansible.builtin.include_vars:

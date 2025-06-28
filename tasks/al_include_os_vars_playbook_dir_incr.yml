@@ -1,11 +1,12 @@
 ---
-# All rights reserved (c) 2021-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2021-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_os_vars_playbook_dir_incr
 #
-# Description: Include OS specific variables from playbook_dir incrementally
+# Description: Include OS specific variables from playbook_dir incrementally.
 #
 # Input: none
 #

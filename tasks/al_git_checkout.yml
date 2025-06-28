@@ -1,6 +1,7 @@
 ---
-# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_git_checkout
@@ -12,6 +13,11 @@
 #   as requirements.yml. See "Installing Multiple Roles From a File".
 #   https://galaxy.ansible.com/docs/using/installing.html#installing-multiple-roles-from-a-file
 #
+# Note:
+#
+#   Because of the lookup plugin the variables my_default_user and my_default_path work at the
+#   localhost only.
+#
 # Input:
 #
 #   al_git_checkout_module ...... Use Ansible git module or git command (default: true)
@@ -22,13 +28,11 @@
 #   al_git_checkout_repos_path .. Directory the repos will be fetched to (default: $HOME/.ansible/repos)
 #   al_git_checkout_repos_file .. File with the list of the repos (default: vars/requirements.yml)
 #
-# Output:
-#
-#   None.
+# Output: None.
 #
 # Example:
 #
-#   shell> playbook.yml
+#   shell> cat playbook.yml
 #   ---
 #   - name: Checkout roles from vars/requirements.yml
 #     hosts: localhost
@@ -77,6 +81,7 @@
     file: "{{ al_git_checkout_repos_file }}"
 
 - name: "Al_git_checkout: Debug al_debug={{ al_debug }}"
+  when: al_debug | bool
   vars:
     msg: |-
       al_git_checkout_module: {{ al_git_checkout_module }}
@@ -90,7 +95,6 @@
         {{ requirements | to_nice_yaml(indent=2) | indent(2) }}
   ansible.builtin.debug:
     msg: "{{ '{}'.format(msg) }}"
-  when: al_debug | bool
 
 - name: "Al_git_checkout: Create directory {{ al_git_checkout_repos_path }}"
   ansible.builtin.file:
@@ -101,16 +105,21 @@
     mode: "{{ al_git_checkout_mode }}"
 
 - name: "Al_git_checkout: Git install repos."
+  when:
+    - item.install | d(true)
+    - al_git_checkout_module | bool
   ansible.builtin.git:
     repo: "{{ item.src }}"
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
     version: "{{ item.version | d('HEAD') }}"
   loop: "{{ requirements }}"
-  when:
-    - item.install | d(true)
-    - al_git_checkout_module | bool
 
 - name: "Al_git_checkout: Command install repos."
+  when:
+    - item.install | d(true)
+    - not al_git_checkout_module | bool
+    - not ansible_check_mode
+  changed_when: false  # TODO: Test registered result
   ansible.builtin.command:
     chdir: "{{ al_git_checkout_repos_path }}"
     cmd: >-
@@ -122,13 +131,11 @@
          git clone {{ item.src }} {{ item.name }};
       fi'
   loop: "{{ requirements }}"
-  changed_when: false  # TODO: Test registered result
-  when:
-    - item.install | d(true)
-    - not al_git_checkout_module | bool
-    - not ansible_check_mode
 
 - name: "Al_git_checkout: Chown and chmod repos."
+  when:
+    - item.install | d(true)
+    - not ansible_check_mode
   ansible.builtin.file:
     state: directory
     dest: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
@@ -136,11 +143,12 @@
     group: "{{ al_git_checkout_group }}"
     mode: "{{ al_git_checkout_mode }}"
   loop: "{{ requirements }}"
-  when:
-    - item.install | d(true)
-    - not ansible_check_mode
 
 - name: "Al_git_checkout: Link repos."
+  when:
+    - item.install | d(true)
+    - item.link is defined
+    - not ansible_check_mode
   ansible.builtin.file:
     state: link
     src: "{{ al_git_checkout_repos_path }}/{{ item.name }}"
@@ -148,10 +156,6 @@
     owner: "{{ al_git_checkout_user }}"
     group: "{{ al_git_checkout_group }}"
   loop: "{{ requirements }}"
-  when:
-    - item.install | d(true)
-    - item.link is defined
-    - not ansible_check_mode
 
 # EOF
 ...
