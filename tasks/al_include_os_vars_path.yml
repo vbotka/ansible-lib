@@ -1,11 +1,12 @@
 ---
-# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_include_os_vars_path
 #
-# Description: Include OS specific variables from al_os_vars_path
+# Description: Include OS specific variables from al_os_vars_path.
 #
 # Input:
 #
@@ -43,7 +44,7 @@
     msg: "{{ '{}'.format(msg) }}"
   when: al_debug | bool
 
-- name: "Al_include_os_vars_path: Test al_os_vars_path defined"
+- name: "Al_include_os_vars_path: Test al_os_vars_path defined."
   ansible.builtin.fail:
     msg: Variable al_os_vars_path not defined. End of play.
   when: al_os_vars_path is not defined

@@ -25,3 +25,4 @@ Bugfixes
 
 Breaking Changes / Porting Guide
 --------------------------------
+* Deprecated al_bsd_service_facts. Use the module vbotka.freebsd.service instead.

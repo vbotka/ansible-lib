@@ -1,15 +1,16 @@
 ---
 # All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_sanity_platform
 #
-# Description: Test whether the platform and version is supported by the role.
+# Description:
 #
-#   Test whether the platform and version is supported or not. By
-#   default print error message and fail if the platform and/or
-#   version is not supported. Optionally end the host or print warning
+#   Test whether the platform and version is supported by the role.  Test whether the
+#   platform and version is supported or not. By default print error message and fail if
+#   the platform and/or version is not supported. Optionally end the host or print warning
 #   only and continue play. See the parameters below.
 #
 # Input:
@@ -31,10 +32,9 @@
 #
 # Example:
 #
-#   Do not collect minimal subset by setup (variables
-#   ansible_distribution_* have already been collected). End host when
-#   platform is not supported. Ignore version. Print warning. Print
-#   debug messages. Override supported platform versions.
+#   Do not collect minimal subset by setup (variables ansible_distribution_* have already
+#   been collected). End host when platform is not supported. Ignore version. Print
+#   warning. Print debug messages. Override supported platform versions.
 #
 #   vars:
 #     al_debug: True
@@ -53,6 +53,7 @@
 #     - include_role:
 #         name: vbotka.ansible_lib
 #         tasks_from: al_sanity_platform
+#
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/tasks/al_sanity_platform.yml
 

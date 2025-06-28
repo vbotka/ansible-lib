@@ -1,15 +1,16 @@
 ---
-# All rights reserved (c) 2020-2024, Vladimir Botka <vbotka@gmail.com>
+# All rights reserved (c) 2020-2025, Vladimir Botka <vbotka@gmail.com>
 # Simplified BSD License, https://opensource.org/licenses/BSD-2-Clause
+# SPDX-License-Identifier: BSD-2-Clause
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ansible_lib: al_runner_events
 #
-# Description: Create list of ansible-runer's job events.
+# Description:
 #
-#   ansible-runner records all job's events in the directory
-#   artifacts/<ID>/job_events. Read files from this directory and
-#   create a list of the dictionaries with the job event's data.
+#   Create list of ansible-runer's job events.  ansible-runner records all job's events in
+#   the directory artifacts/<ID>/job_events. Read files from this directory and create a
+#   list of the dictionaries with the job event's data.
 #
 # Input:
 #
@@ -39,12 +40,12 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # https://github.com/vbotka/ansible-lib/tasks/al_runner_events.yml
 
-- name: "Al_runner_events: Find files"
+- name: "Al_runner_events: Find files."
   ansible.builtin.find:
     paths: "{{ al_runner_events_dir }}"
   register: result
 
-- name: "Al_runner_events: Include events from the files"
+- name: "Al_runner_events: Include events from the files."
   ansible.builtin.include_vars:
     file: "{{ item }}"
     name: "{{ 'my_var_' ~ my_idx }}"
@@ -52,15 +53,15 @@
   loop_control:
     index_var: my_idx
 
-- name: "Al_runner_events: Create list of events"
+- name: "Al_runner_events: Create list of events."
+  vars:
+    my_key: "{{ 'my_var_' ~ my_idx }}"
   ansible.builtin.set_fact:
     al_runner_events_list: "{{ al_runner_events_list | d([]) +
                                [lookup('ansible.builtin.vars', my_key)] }}"
   loop: "{{ range(0, result.matched) | list }}"
   loop_control:
     index_var: my_idx
-  vars:
-    my_key: "{{ 'my_var_' ~ my_idx }}"
 
 - name: "Al_runner_events: Sort list of events"
   ansible.builtin.set_fact:
