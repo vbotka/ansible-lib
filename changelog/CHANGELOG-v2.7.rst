@@ -17,6 +17,7 @@ Major Changes
 
 Minor Changes
 -------------
+* Add .gitignore to git.
 
 Bugfixes
 --------
