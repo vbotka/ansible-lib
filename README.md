@@ -4,6 +4,8 @@
 [![Build Status](https://app.travis-ci.com/vbotka/ansible-lib.svg?branch=master)](https://app.travis-ci.com/vbotka/ansible-lib)
 [![GitHub tag](https://img.shields.io/github/v/tag/vbotka/ansible-lib)](https://github.com/vbotka/ansible-lib/tags)
 
+This role is included in the collection [vbotka.freebsd](https://galaxy.ansible.com/ui/repo/published/vbotka/freebsd/) as [vbotka.freebsd.lib](https://galaxy.ansible.com/ui/repo/published/vbotka/freebsd/content/role/lib)
+
 [Ansible role.](https://galaxy.ansible.com/vbotka/ansible_lib/) Library of Ansible tasks.
 
 Feel free to [share your feedback and report issues](https://github.com/vbotka/ansible-lib/issues).
