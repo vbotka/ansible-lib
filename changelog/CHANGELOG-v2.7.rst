@@ -10,6 +10,7 @@ vbotka.ansible_lib 2.7 Release Notes
 
 Release Summary
 ---------------
+Update debug tasks.
 
 Major Changes
 -------------

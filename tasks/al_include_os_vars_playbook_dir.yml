@@ -75,7 +75,7 @@
   register: result
   ansible.builtin.include_vars: "{{ _file }}"
 
-- name: "Al_include_os_vars_playbook_dir: Debug result al_debug={{ al_debug2 }}"
+- name: "Al_include_os_vars_playbook_dir: Debug result al_debug2={{ al_debug2 }}"
   when: al_debug2 | bool
   ansible.builtin.debug:
     var: result
