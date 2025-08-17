@@ -37,7 +37,7 @@
       files: "{{ _files | unique }}"
       paths: "{{ playbook_dir }}/vars/defaults"
       skip: true
-# register: result
+  register: result
   ansible.builtin.include_vars: "{{ _file }}"
 
 # - name: "al_include_os_vars_playbook_dir: Debug result al_debug={{ al_debug }}"
@@ -61,7 +61,7 @@
       files: "{{ _files | unique }}"
       paths: "{{ playbook_dir }}/vars"
       skip: true
-# register: result
+  register: result
   ansible.builtin.include_vars: "{{ _file }}"
 
 # - name: "al_include_os_vars_playbook_dir: Debug result al_debug={{ al_debug }}"

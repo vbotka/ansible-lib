@@ -57,7 +57,7 @@
       - "{{ my_path }}/{{ ansible_os_family }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-# register: result
+  register: result
   ansible.builtin.include_vars: "{{ item }}"
   loop: "{{ options | unique }}"
 
@@ -78,7 +78,7 @@
       - "{{ my_path }}/{{ ansible_os_family }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-# register: result
+  register: result
   ansible.builtin.include_vars: "{{ item }}"
   loop: "{{ options | unique }}"
 

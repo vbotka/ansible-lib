@@ -24,9 +24,6 @@
 # Defaults variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_include_os_vars_playbook_dir_incr: vars from {{ playbook_dir ~ 'vars/defaults' }}"
-  ansible.builtin.include_vars: "{{ item }}"
-  # register: result
-  loop: "{{ options | unique }}"
   when: item is exists
   vars:
     my_path: "{{ playbook_dir }}/vars/defaults"
@@ -36,18 +33,18 @@
       - "{{ my_path }}/{{ ansible_os_family }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+  register: result
+  ansible.builtin.include_vars: "{{ item }}"
+  loop: "{{ options | unique }}"
 
 # - name: "al_include_os_vars_playbook_dir_incr: Debug include default vars al_debug={{ al_debug }}"
+#   when: al_debug | bool
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug | bool
 
 # Custom variables - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 - name: "Al_include_os_vars_playbook_dir_incr: vars from {{ playbook_dir ~ '/vars' }}"
-  ansible.builtin.include_vars: "{{ item }}"
-  # register: result
-  loop: "{{ options | unique }}"
   when: item is exists
   vars:
     my_path: "{{ playbook_dir }}/vars"
@@ -57,11 +54,14 @@
       - "{{ my_path }}/{{ ansible_os_family }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}.yml"
       - "{{ my_path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+  register: result
+  ansible.builtin.include_vars: "{{ item }}"
+  loop: "{{ options | unique }}"
 
 # - name: "al_include_os_vars_playbook_dir_incr: Debug include custom vars al_debug={{ al_debug }}"
+#   when: al_debug | bool
 #   ansible.builtin.debug:
 #     var: result
-#   when: al_debug | bool
 
 # EOF
 ...

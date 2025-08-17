@@ -16,7 +16,7 @@ Major Changes
 
 Minor Changes
 -------------
-
+* Tasks formatting unified.
 
 
 2.7.1
