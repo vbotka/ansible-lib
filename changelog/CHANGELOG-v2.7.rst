@@ -17,6 +17,7 @@ Major Changes
 Minor Changes
 -------------
 * Tasks formatting unified.
+* Update debug tasks. Add var debug2 (default=false).
 
 
 2.7.1
