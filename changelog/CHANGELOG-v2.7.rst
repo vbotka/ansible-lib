@@ -5,6 +5,22 @@ vbotka.ansible_lib 2.7 Release Notes
 .. contents:: Topics
 
 
+2.7.2
+=====
+
+Release Summary
+---------------
+Update debug tasks.
+
+Major Changes
+-------------
+
+Minor Changes
+-------------
+* Tasks formatting unified.
+* Update debug tasks. Add var debug2 (default=false).
+
+
 2.7.1
 =====
 
