@@ -157,7 +157,7 @@
   when: al_include_dir_vars_values is defined
   ansible.builtin.set_fact:
     al_vars: "{{ al_vars | d({}) | combine({item.0: item.1 | items2dict}) }}"
-  loop: "{{ al_include_dir_vars_values | groupby('var') }}"
+  loop: "{{ al_include_dir_vars_values | groupby('var') | map('list') }}"
   loop_control:
     label: "{{ item.0 }}"
 
